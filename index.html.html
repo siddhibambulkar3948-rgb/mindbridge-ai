@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MindBridge AI — ExamShield</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          bg: 'var(--bg)', surface: 'var(--surface)', surfacealt: 'var(--surface-alt)',
+          border2: 'var(--border)', ink: 'var(--ink)', inksoft: 'var(--ink-soft)',
+          brand: 'var(--brand)', branddark: 'var(--brand-dark)', brandlight: 'var(--brand-light)',
+          gold: 'var(--gold)', goldlight: 'var(--gold-light)',
+          alert: 'var(--alert)', alertlight: 'var(--alert-light)', calmblue: 'var(--calm-blue)'
+        },
+        fontFamily: { serif: ['Lora','ui-serif','Georgia','serif'], sans: ['Inter','ui-sans-serif','system-ui','sans-serif'] },
+        borderRadius: { sm2:'10px', md2:'16px', lg2:'24px' }
+      }
+    }
+  }
+</script>
+<style>
+  :root{
+    --bg:#FAFBF8; --surface:#FFFFFF; --surface-alt:#F1F5F2; --border:#DDE6E1;
+    --ink:#182420; --ink-soft:#52625C; --brand:#2D6A63; --brand-dark:#1F4B45; --brand-light:#E4EFEA;
+    --gold:#B8862B; --gold-light:#F4E7CB; --calm-blue:#4A72A6; --alert:#B8483A; --alert-light:#F6E4E0;
+    --shadow: 0 1px 2px rgba(24,36,32,.06), 0 4px 14px rgba(24,36,32,.05);
+  }
+  [data-theme="dark"]{
+    --bg:#101613; --surface:#161D1A; --surface-alt:#1B2320; --border:#293430;
+    --ink:#EAF1EE; --ink-soft:#9FB0AA; --brand:#5FA79B; --brand-dark:#3F7A70; --brand-light:#1D2C28;
+    --gold:#E0B75E; --gold-light:#2C2618; --calm-blue:#7FA3D1; --alert:#E08876; --alert-light:#2E1E1B;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.25);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#101613; --surface:#161D1A; --surface-alt:#1B2320; --border:#293430;
+      --ink:#EAF1EE; --ink-soft:#9FB0AA; --brand:#5FA79B; --brand-dark:#3F7A70; --brand-light:#1D2C28;
+      --gold:#E0B75E; --gold-light:#2C2618; --calm-blue:#7FA3D1; --alert:#E08876; --alert-light:#2E1E1B;
+    }
+  }
+  *{ box-sizing:border-box; }
+  html,body{ background:var(--bg); color:var(--ink); }
+  body{ font-family:'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  h1,h2,h3,.font-display{ font-family:'Lora',Georgia,serif; }
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow); }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:.5rem; font-weight:600; border-radius:12px; padding:.7rem 1.15rem; transition:transform .15s ease, opacity .15s ease, background .15s ease; cursor:pointer; border:1px solid transparent; font-size:.92rem; }
+  .btn:active{ transform:scale(.97); }
+  .btn-primary{ background:var(--brand); color:#fff; }
+  .btn-primary:hover{ background:var(--brand-dark); }
+  .btn-gold{ background:var(--gold); color:#241a05; }
+  .btn-gold:hover{ opacity:.9; }
+  .btn-outline{ background:transparent; border-color:var(--border); color:var(--ink); }
+  .btn-outline:hover{ background:var(--surface-alt); }
+  .btn-alert{ background:var(--alert); color:#fff; }
+  .btn-alert:hover{ opacity:.9; }
+  .btn-ghost{ background:transparent; color:var(--ink-soft); }
+  .btn-ghost:hover{ background:var(--surface-alt); color:var(--ink); }
+  .chip{ display:inline-flex; align-items:center; gap:.4rem; padding:.35rem .75rem; border-radius:999px; font-size:.8rem; font-weight:600; border:1px solid var(--border); background:var(--surface-alt); color:var(--ink-soft); }
+  input[type=text],input[type=email],input[type=password],input[type=date],input[type=number],select,textarea{
+    width:100%; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:.65rem .8rem; color:var(--ink); font-family:inherit; font-size:.92rem;
+  }
+  input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible,.focusable:focus-visible{ outline:2px solid var(--brand); outline-offset:2px; }
+  input[type=range]{ width:100%; accent-color:var(--brand); }
+  ::placeholder{ color:var(--ink-soft); opacity:.7; }
+  .scrollbar-thin::-webkit-scrollbar{ width:6px; height:6px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb{ background:var(--border); border-radius:99px; }
+  .breathe-circle{ transition: transform 4s ease-in-out; }
+  .breathe-in{ transform:scale(1.55); transition-duration:4s; }
+  .breathe-hold{ transform:scale(1.55); transition-duration:.1s; }
+  .breathe-out{ transform:scale(1); transition-duration:6s; }
+  .fade-in{ animation:fadeIn .35s ease both; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+  @media (prefers-reduced-motion: reduce){ .breathe-circle{ transition:none !important; } .fade-in{ animation:none !important; } }
+  .sidebar-link{ display:flex; align-items:center; gap:.75rem; padding:.65rem .9rem; border-radius:12px; color:var(--ink-soft); font-weight:600; font-size:.92rem; }
+  .sidebar-link.active{ background:var(--brand-light); color:var(--brand-dark); }
+  .sidebar-link:hover:not(.active){ background:var(--surface-alt); }
+  .bottom-tab{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; font-size:.62rem; font-weight:600; color:var(--ink-soft); padding:.35rem 0; flex:1; }
+  .bottom-tab.active{ color:var(--brand-dark); }
+  textarea{ resize:vertical; min-height:70px; }
+  .msg-bubble{ max-width:78%; padding:.65rem .9rem; border-radius:16px; font-size:.9rem; line-height:1.45; }
+  .msg-ai{ background:var(--surface-alt); color:var(--ink); border-bottom-left-radius:4px; }
+  .msg-user{ background:var(--brand); color:#fff; border-bottom-right-radius:4px; margin-left:auto; }
+  .typing-dot{ width:6px; height:6px; border-radius:99px; background:var(--ink-soft); display:inline-block; animation:blink 1.2s infinite ease-in-out; }
+  .typing-dot:nth-child(2){ animation-delay:.2s; } .typing-dot:nth-child(3){ animation-delay:.4s; }
+  @keyframes blink{ 0%,80%,100%{ opacity:.25; } 40%{ opacity:1; } }
+  .toast{ background:var(--ink); color:var(--bg); border-radius:12px; padding:.7rem 1rem; font-size:.85rem; font-weight:600; box-shadow:var(--shadow); }
+  .modal-backdrop{ background:rgba(16,20,18,.55); backdrop-filter:blur(2px); }
+  ::selection{ background:var(--brand-light); }
+</style>
+</head>
+<body class="min-h-screen">
+<div id="toastRoot" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 items-end"></div>
+<div id="modalRoot"></div>
+<div id="app"></div>
+
+<script>
+/* =========================================================
+   MINDBRIDGE AI — storage / services / state
+   ========================================================= */
+const SKEY = { users:'mb_users', session:'mb_session' };
+const store = {
+  get(k, fallback){ try{ const v = localStorage.getItem(k); return v===null? fallback : JSON.parse(v); }catch(e){ return fallback; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ return false; } },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+function uid(p){ return (p||'id')+'_'+Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4); }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function fmtDate(iso){ const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'}); }
+function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
+function clamp(n,a,b){ return Math.max(a,Math.min(b,n)); }
+function esc(s){ return (s||'').toString().replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------- crisis resources (India) — verified public sources ---------- */
+const CRISIS_RESOURCES = {
+  country: 'India',
+  emergency: { label:'National Emergency Number', value:'112' },
+  lines: [
+    { name:'KIRAN Mental Health Helpline', value:'1800-599-0019', note:'Govt. of India — 24x7, toll-free, 13 languages' },
+    { name:'Tele MANAS', value:'14416 / 1-800-891-4416', note:'Govt. of India tele-mental-health service, 24x7' }
+  ],
+  note:'These are official government-run helplines. Configure additional local/regional resources in crisisService.config as needed.'
+};
+
+/* ---------- auth service ---------- */
+const authService = {
+  getUsers(){ return store.get(SKEY.users, []); },
+  saveUsers(u){ store.set(SKEY.users, u); },
+  hash(pw){ return btoa(unescape(encodeURIComponent('mb::'+pw))); }, // demo-only, NOT production-secure
+  signup(name, email, password){
+    const users = this.getUsers();
+    if(users.find(u=>u.email.toLowerCase()===email.toLowerCase())) return { ok:false, error:'An account with this email already exists.' };
+    const user = { id: uid('user'), name, email, passHash: this.hash(password), createdAt: Date.now() };
+    users.push(user); this.saveUsers(users);
+    dataService.init(user.id, name);
+    store.set(SKEY.session, user.id);
+    return { ok:true, user };
+  },
+  login(email, password){
+    const users = this.getUsers();
+    const user = users.find(u=>u.email.toLowerCase()===email.toLowerCase());
+    if(!user || user.passHash !== this.hash(password)) return { ok:false, error:'Incorrect email or password.' };
+    store.set(SKEY.session, user.id);
+    return { ok:true, user };
+  },
+  logout(){ store.del(SKEY.session); },
+  currentUser(){
+    const id = store.get(SKEY.session, null);
+    if(!id) return null;
+    return this.getUsers().find(u=>u.id===id) || null;
+  },
+  resetPasswordDemo(email, newPassword){
+    const users = this.getUsers();
+    const user = users.find(u=>u.email.toLowerCase()===email.toLowerCase());
+    if(!user) return { ok:false, error:'No account found with that email.' };
+    user.passHash = this.hash(newPassword); this.saveUsers(users);
+    return { ok:true };
+  }
+};
+
+/* ---------- per-user data service ---------- */
+function dataKey(uidStr){ return 'mb_data_' + uidStr; }
+const dataService = {
+  init(userId, name){
+    const blank = {
+      profile:{ name, ageRange:'', exam:'', stage:'', attemptType:'', examDate:'', pressureSources:[], supportPrefs:[], academicSelf:'', pressureLevel:5, onboardingComplete:false, onboardingStep:1, wellbeingBaseline:null },
+      checkins:[], mockTests:[], conversations:[], trustedContacts:[], safetyEvents:[],
+      phase:'preparation',
+      resultPeriodActive:false,
+      settings:{ theme:'light', notifDailyReminder:true, reminderTime:'20:00', accessibilityLargeText:false, reducedMotion:false, aiTone:'warm', emergencyLocation:'India', dataLocalOnly:true },
+      studyBalance:{ date: todayISO(), items:[] }
+    };
+    store.set(dataKey(userId), blank);
+    return blank;
+  },
+  get(userId){ return store.get(dataKey(userId), null); },
+  save(userId, data){ store.set(dataKey(userId), data); },
+  update(userId, patchFn){
+    const data = this.get(userId) || this.init(userId, '');
+    patchFn(data);
+    this.save(userId, data);
+    return data;
+  }
+};
+
+/* ---------- pattern detection service (rule-based, non-clinical) ---------- */
+const patternService = {
+  level(checkins){
+    if(!checkins || checkins.length===0) return { level:'none', message:null };
+    const recent = checkins.slice(-5);
+    const elevatedCount = recent.filter(c=> c.stress>=7 && c.sleep<=4 && c.motivation<=4).length;
+    const avgStress = recent.reduce((s,c)=>s+c.stress,0)/recent.length;
+    if(elevatedCount>=2){
+      return { level:'elevated', message:"Your recent check-ins show a pattern of high stress and reduced wellbeing — several nights of poor sleep alongside high reported pressure." };
+    }
+    if(avgStress>=6){
+      return { level:'moderate', message:"Your recent check-ins suggest you may be under significant pressure lately." };
+    }
+    return { level:'low', message:"Your recent check-ins look relatively steady." };
+  },
+  insights(checkins){
+    const out = [];
+    if(!checkins || checkins.length<3) return out;
+    const recent = checkins.slice(-14);
+    const avgSleep = recent.reduce((s,c)=>s+c.sleep,0)/recent.length;
+    const poorSleepNights = recent.filter(c=>c.sleep<=4).length;
+    if(poorSleepNights>=3) out.push("You've reported several nights of reduced sleep in your recent check-ins.");
+    const highPressure = recent.filter(c=>c.pressure>=7).length;
+    if(highPressure/recent.length > 0.5) out.push("You tend to report lower motivation when pressure is high.");
+    if(avgSleep<5) out.push("Your average reported sleep quality has been on the lower side recently.");
+    return out;
+  }
+};
+
+/* ---------- safety / crisis detection ---------- */
+const CRISIS_PATTERNS = [
+  /want(ing)?\s+to\s+die/i, /suicid/i, /kill\s+myself/i, /end\s+my\s+life/i, /end\s+it\s+all/i,
+  /hurt\s+myself/i, /harm\s+myself/i, /self[\s-]?harm/i, /no\s+reason\s+to\s+live/i,
+  /can'?t\s+go\s+on/i, /not\s+safe/i, /unsafe\s+right\s+now/i, /plan\s+to\s+hurt/i, /better\s+off\s+dead/i
+];
+function detectCrisisLanguage(text){ return CRISIS_PATTERNS.some(r=>r.test(text)); }
+
+/* ---------- AI service (rule-based, context-aware, non-diagnostic) ---------- */
+const aiService = {
+  buildContext(data){
+    const lastCheckin = data.checkins[data.checkins.length-1] || null;
+    const lastMock = data.mockTests[data.mockTests.length-1] || null;
+    return {
+      exam: data.profile.exam || 'your exam', stage: data.profile.stage || '',
+      phase: data.phase, lastCheckin, lastMock,
+      pattern: patternService.level(data.checkins)
+    };
+  },
+  detectSupportNeed(text){ return detectCrisisLanguage(text); },
+  generateResponse(userText, data){
+    const ctx = this.buildContext(data);
+    if(this.detectSupportNeed(userText)){
+      return {
+        mode:'crisis',
+        text: "Thank you for telling me. That sounds like a lot to carry right now, and I want to take it seriously. I can stay with you in this conversation, but I'm not a replacement for immediate human help — would you consider reaching out to a trusted person or a helpline right now? I've opened some immediate support options for you."
+      };
+    }
+    const t = userText.toLowerCase();
+    const examName = ctx.exam || 'your exam';
+    if(/overwhelm|too much|can'?t handle|drowning/.test(t)){
+      return { mode:'normal', text: `It makes sense that ${examName} preparation can feel like a lot to carry, especially during ${ctx.phase.replace('-',' ')}. Would it help to take a moment to ground yourself first, or would you rather talk through what's feeling heaviest right now?` };
+    }
+    if(/mock|score|marks|result of the test|test result/.test(t)){
+      const mockLine = ctx.lastMock ? ` I can see your last mock was ${ctx.lastMock.score}/${ctx.lastMock.max} — one number doesn't capture your whole preparation.` : '';
+      return { mode:'normal', text: `Mock-test results can bring up a lot of feeling, especially when you've put in real effort.${mockLine} Would you like emotional support first, or to look at the pattern together?` };
+    }
+    if(/scared|afraid|nervous|anxious about (my )?result|waiting for (my )?result/.test(t)){
+      return { mode:'normal', text: "Waiting on a result can be one of the hardest parts of this whole journey — the uncertainty itself is exhausting. Whatever happens, you don't have to face it alone. Is there someone you trust who could sit with you through this waiting period?" };
+    }
+    if(/parents|family|expect/.test(t)){
+      return { mode:'normal', text: "Family expectations can add a whole extra layer of pressure on top of your own. Your worth isn't decided by one exam, even if it doesn't feel that way right now. What's the hardest part of the family pressure for you at the moment?" };
+    }
+    if(/sleep|can'?t sleep|insomnia|tired/.test(t)){
+      const sleepLine = ctx.lastCheckin ? ` Your last check-in showed a sleep quality of ${ctx.lastCheckin.sleep}/10.` : '';
+      return { mode:'normal', text: `Sleep and stress often feed each other, so this is really worth paying attention to.${sleepLine} Would a short wind-down routine or a breathing exercise help tonight?` };
+    }
+    if(/falling behind|behind in|not enough time|syllabus/.test(t)){
+      return { mode:'normal', text: "Feeling behind can create a lot of pressure on its own, separate from the actual studying. Would it help to look at what feels manageable today, rather than the whole syllabus at once?" };
+    }
+    if(/lonely|isolat|no one understands|alone/.test(t)){
+      return { mode:'normal', text: "Preparation like this can feel isolating, even in a room full of other students doing the same thing. I'm glad you're talking about it here — is there someone in your life you could also reach out to today?" };
+    }
+    if(/proud|good|better|okay today|feeling fine|motivated/.test(t)){
+      return { mode:'normal', text: "That's genuinely good to hear — it's worth noticing the moments that feel steadier too, not only the hard ones. What's been helping today?" };
+    }
+
+    // Practical free-text answers for common study questions.
+    if(/how (do|can) i study|how should i study|study plan|timetable|schedule/.test(t)){
+      return { mode:'normal', text: `For ${examName}, try a simple cycle: 1) choose one priority topic, 2) study for 45–50 minutes, 3) take a 10-minute break, 4) solve practice questions, and 5) spend 10 minutes reviewing mistakes. Keep only 2–3 important targets for the day so the plan stays realistic.` };
+    }
+    if(/concentrat|focus|distract|phone|procrastinat/.test(t)){
+      return { mode:'normal', text: "Try a 25-minute focus block: keep your phone away, choose one very specific task, and start with just five minutes. When the block ends, take a short break and repeat. The goal is not perfect concentration — it is getting started and returning to the task." };
+    }
+    if(/motivat|lazy|can't start|cannot start|don't feel like studying/.test(t)){
+      return { mode:'normal', text: "You don't need to feel motivated before starting. Make the first task extremely small: open the chapter, review one concept, or solve five questions. Once you begin, momentum often makes the next step easier." };
+    }
+    if(/revise|revision|remember|memorize|forget/.test(t)){
+      return { mode:'normal', text: "For revision, use active recall instead of repeatedly rereading. Close the book and write what you remember, solve a few questions without looking at the answer, then review only the gaps. Revisit difficult topics after a short interval rather than trying to memorize everything in one sitting." };
+    }
+    if(/exam strategy|test strategy|during (the )?exam|exam hall|time management/.test(t)){
+      return { mode:'normal', text: "A useful exam strategy is to secure the questions you know first, mark uncertain ones for review, and keep a fixed amount of time for checking. Avoid spending too long on one difficult question at the cost of several easier ones." };
+    }
+    if(/today|tonight|what should i do/.test(t)){
+      return { mode:'normal', text: "For today, pick one high-priority topic, one practice set, and one short revision task. Add a proper meal, a short movement break, and a realistic stopping time. A smaller plan you complete is more useful than a huge plan that creates more pressure." };
+    }
+    if(/help me|what can you do|what do you do|can you help/.test(t)){
+      return { mode:'normal', text: "Yes. You can talk to me about exam stress, study planning, concentration, sleep, mock-test pressure, family expectations, motivation, or feeling behind. You can also ask me a specific question, and I'll give you a practical response based on your MindBridge profile." };
+    }
+    return { mode:'normal', text: `I hear you. Based on your ${examName} preparation, I can help you work through this. Tell me the specific problem or question — for example, "make me a study plan", "I can't concentrate", "I scored badly in my mock", or "I'm scared about the exam" — and I'll respond with practical next steps.` };
+  },
+  suggestedPrompts(){
+    return ["I'm overwhelmed by NEET.", "I scored badly in my mock test.", "I'm scared about my result.", "My parents expect a lot from me.", "I haven't been sleeping properly.", "I feel like I'm falling behind."];
+  }
+};
+
+/* ---------- professional support directory (demo entries, clearly labeled) ---------- */
+const professionalDirectory = [
+  { id:'p1', name:'(Demo) Dr. Anika Rao', type:'Psychiatrist', mode:'Online & in-person', location:'Delhi NCR', demo:true },
+  { id:'p2', name:'(Demo) Meera Counselling Collective', type:'Counsellor', mode:'Online', location:'Bengaluru', demo:true },
+  { id:'p3', name:'(Demo) Dr. Sanjay Iyer', type:'Psychologist', mode:'In-person', location:'Mumbai', demo:true },
+  { id:'p4', name:'(Demo) City Care Emergency Dept.', type:'Hospital / emergency department', mode:'In-person', location:'Pan-India', demo:true },
+  { id:'p5', name:'(Demo) Wellspring Student Counselling', type:'Counsellor', mode:'Online', location:'Pune', demo:true },
+  { id:'p6', name:'(Demo) Dr. Farah Sheikh', type:'Psychiatrist', mode:'Online', location:'Hyderabad', demo:true }
+];
+
+/* =========================================================
+   TOAST / MODAL
+   ========================================================= */
+function toast(msg){
+  const root = document.getElementById('toastRoot');
+  const el = document.createElement('div');
+  el.className='toast fade-in'; el.textContent = msg;
+  root.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 2600);
+}
+function closeModal(){ document.getElementById('modalRoot').innerHTML=''; }
+function openModal(innerHtml, opts){
+  opts = opts||{};
+  document.getElementById('modalRoot').innerHTML = `
+  <div class="fixed inset-0 z-[90] modal-backdrop flex items-end sm:items-center justify-center p-0 sm:p-4" onclick="if(event.target===this) closeModal()">
+    <div class="card w-full sm:max-w-lg max-h-[92vh] overflow-y-auto scrollbar-thin rounded-b-none sm:rounded-b-[16px] fade-in" role="dialog" aria-modal="true">
+      ${innerHtml}
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   ROUTER
+   ========================================================= */
+const PROTECTED_PREFIXES = ['/onboarding','/dashboard','/examshield','/chat','/wellbeing','/support','/trusted-contact','/profile','/settings','/dev'];
+function currentPath(){ return (location.hash || '#/').slice(1) || '/'; }
+function navigate(path){ location.hash = '#'+path; }
+function isProtected(path){ return PROTECTED_PREFIXES.some(p=> path===p || path.startsWith(p+'/')); }
+
+window.addEventListener('hashchange', render);
+window.addEventListener('DOMContentLoaded', ()=>{ applyTheme(); render(); });
+
+function applyTheme(){
+  const user = authService.currentUser();
+  if(user){
+    const data = dataService.get(user.id);
+    if(data && data.settings && data.settings.theme){
+      document.documentElement.setAttribute('data-theme', data.settings.theme);
+    }
+  }
+}
+
+function requireData(){
+  const user = authService.currentUser();
+  if(!user) return null;
+  return dataService.get(user.id) || dataService.init(user.id, user.name);
+}
+
+function render(){
+  const path = currentPath();
+  const user = authService.currentUser();
+
+  if(isProtected(path) && !user){ navigate('/login'); return; }
+  if(user){
+    const data = requireData();
+    if(path.startsWith('/onboarding') === false && !data.profile.onboardingComplete && isProtected(path)){
+      navigate('/onboarding'); return;
+    }
+    if((path==='/' || path==='/login' || path==='/signup') ){
+      navigate(data.profile.onboardingComplete ? '/dashboard' : '/onboarding'); return;
+    }
+  }
+
+  const app = document.getElementById('app');
+  let html = '';
+  if(path==='/') html = pageLanding();
+  else if(path==='/login') html = pageLogin();
+  else if(path==='/signup') html = pageSignup();
+  else if(path.startsWith('/onboarding')) html = withShell(pageOnboarding(), {bare:true});
+  else if(path==='/dashboard') html = withShell(pageDashboard());
+  else if(path==='/examshield') html = withShell(pageExamShieldHome());
+  else if(path==='/examshield/check-in') html = withShell(pageCheckIn());
+  else if(path==='/examshield/timeline') html = withShell(pageTimeline());
+  else if(path==='/examshield/mock-test') html = withShell(pageMockTest());
+  else if(path==='/examshield/exam-calm') html = withShell(pageExamCalm());
+  else if(path==='/examshield/recovery') html = withShell(pageRecovery());
+  else if(path==='/chat') html = withShell(pageChat());
+  else if(path==='/wellbeing') html = withShell(pageWellbeing());
+  else if(path==='/support') html = withShell(pageSupport());
+  else if(path==='/trusted-contact') html = withShell(pageTrustedContact());
+  else if(path==='/profile') html = withShell(pageProfile());
+  else if(path==='/settings') html = withShell(pageSettings());
+  else if(path==='/dev') html = withShell(pageDev());
+  else html = withShell(page404());
+
+  app.innerHTML = html;
+  window.scrollTo(0,0);
+  afterRender(path);
+}
+
+function afterRender(path){
+  if(path==='/chat') { scrollChatToBottom(); }
+  if(path==='/examshield/exam-calm'){ /* breathing controlled via App fns */ }
+}
+
+/* =========================================================
+   SHELL (sidebar + topbar + bottom nav)
+   ========================================================= */
+function navItems(){
+  return [
+    {path:'/dashboard', icon:'🏠', label:'Home'},
+    {path:'/examshield', icon:'🛡️', label:'ExamShield'},
+    {path:'/chat', icon:'💬', label:'Talk'},
+    {path:'/wellbeing', icon:'🧠', label:'Wellbeing'},
+    {path:'/examshield/exam-calm', icon:'🧘', label:'Calm'},
+    {path:'/support', icon:'🤝', label:'Support'},
+    {path:'/profile', icon:'👤', label:'Profile'},
+    {path:'/settings', icon:'⚙️', label:'Settings'}
+  ];
+}
+function withShell(innerHtml, opts){
+  opts = opts || {};
+  if(opts.bare) return innerHtml;
+  const user = authService.currentUser();
+  const data = user ? dataService.get(user.id) : null;
+  const path = currentPath();
+  const items = navItems();
+  const sidebarLinks = items.map(it=>`
+    <a href="#${it.path}" class="sidebar-link ${path===it.path?'active':''}">
+      <span class="text-lg" aria-hidden="true">${it.icon}</span><span>${it.label}</span>
+    </a>`).join('');
+  const bottomItems = [items[0],items[1],items[2],items[3],items[6]];
+  const bottomLinks = bottomItems.map(it=>`
+    <a href="#${it.path}" class="bottom-tab ${path===it.path?'active':''}">
+      <span class="text-lg" aria-hidden="true">${it.icon}</span><span>${it.label}</span>
+    </a>`).join('');
+  return `
+  <div class="min-h-screen flex">
+    <aside class="hidden md:flex md:flex-col w-64 shrink-0 border-r" style="border-color:var(--border); background:var(--surface);">
+      <div class="px-5 py-5 flex items-center gap-2">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:var(--brand-light); color:var(--brand-dark);">🌉</div>
+        <div>
+          <div class="font-display font-semibold text-[1.05rem] leading-tight">MindBridge</div>
+          <div class="text-[.7rem] text-inksoft leading-tight" style="color:var(--ink-soft);">AI ExamShield</div>
+        </div>
+      </div>
+      <nav class="flex-1 px-3 flex flex-col gap-1">${sidebarLinks}</nav>
+      <div class="p-3">
+        <button onclick="App.openNeedHelp()" class="btn btn-alert w-full">🚨 I Need Help Now</button>
+      </div>
+      <div class="p-3 pt-0 text-[.7rem]" style="color:var(--ink-soft);">Signed in as ${esc(user? user.name : '')}</div>
+    </aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+      <header class="md:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 border-b" style="background:var(--surface); border-color:var(--border);">
+        <a href="#/dashboard" class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--brand-light); color:var(--brand-dark);">🌉</div>
+          <span class="font-display font-semibold">MindBridge</span>
+        </a>
+        <button onclick="App.openNeedHelp()" class="btn btn-alert !py-1.5 !px-3 text-xs">🚨 Help</button>
+      </header>
+
+      <main class="flex-1 pb-24 md:pb-8">
+        ${innerHtml}
+      </main>
+
+      <nav class="md:hidden fixed bottom-0 inset-x-0 z-30 flex border-t" style="background:var(--surface); border-color:var(--border); padding-bottom:env(safe-area-inset-bottom);">
+        ${bottomLinks}
+      </nav>
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   PAGE: LANDING
+   ========================================================= */
+function pageLanding(){
+  return `
+  <div class="min-h-screen" style="background:var(--bg);">
+    <header class="max-w-6xl mx-auto flex items-center justify-between px-5 sm:px-8 py-5">
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:var(--brand-light); color:var(--brand-dark);">🌉</div>
+        <span class="font-display font-semibold text-lg">MindBridge AI</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="#/login" class="btn btn-ghost">Log in</a>
+        <a href="#/signup" class="btn btn-primary">Get Started</a>
+      </div>
+    </header>
+
+    <section class="max-w-4xl mx-auto px-5 sm:px-8 pt-10 sm:pt-16 pb-14 text-center">
+      <div class="flex justify-center mb-8" aria-hidden="true">
+        <div class="relative w-28 h-28 sm:w-36 sm:h-36">
+          <div class="absolute inset-0 rounded-full" style="border:1.5px solid var(--border);"></div>
+          <div class="absolute inset-3 rounded-full" style="border:1.5px solid var(--border);"></div>
+          <div class="absolute inset-6 rounded-full flex items-center justify-center text-3xl sm:text-4xl" style="background:var(--brand-light); color:var(--brand-dark);">🌉</div>
+        </div>
+      </div>
+      <h1 class="font-display font-semibold text-3xl sm:text-5xl leading-tight">Supporting students before stress becomes a crisis.</h1>
+      <p class="mt-5 text-base sm:text-lg max-w-2xl mx-auto" style="color:var(--ink-soft);">An exam-stress-aware AI wellbeing platform that understands what students are going through — from preparation and mock tests to exam anxiety, results and recovery.</p>
+      <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="#/signup" class="btn btn-primary text-base px-6 py-3">Get Started</a>
+        <a href="#examshield-section" class="btn btn-outline text-base px-6 py-3">Explore ExamShield 🛡️</a>
+      </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-5 sm:px-8 py-14 border-t" style="border-color:var(--border);">
+      <h2 class="font-display font-semibold text-2xl sm:text-3xl text-center">The problem with high-stakes preparation</h2>
+      <div class="mt-8 grid sm:grid-cols-4 gap-4">
+        ${['Academic pressure','Mock-test setbacks','Sleep deprivation','Family expectations','Coaching pressure','Isolation','Burnout','Result anxiety'].map(t=>`
+          <div class="card p-4 text-sm font-medium">${t}</div>`).join('')}
+      </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-5 sm:px-8 py-14">
+      <h2 class="font-display font-semibold text-2xl sm:text-3xl text-center">The MindBridge difference</h2>
+      <p class="text-center mt-2 max-w-2xl mx-auto" style="color:var(--ink-soft);">MindBridge doesn't only respond when a student says they're struggling. It understands the context around high-stress academic events and can offer targeted wellbeing support as that journey changes.</p>
+      <div class="mt-10 grid md:grid-cols-2 gap-8 items-center">
+        <div class="card p-6">
+          <div class="text-xs font-semibold tracking-wide" style="color:var(--ink-soft);">Traditional model</div>
+          <div class="mt-4 flex flex-col items-center gap-3 text-sm font-semibold">
+            <div class="chip">Distress</div><div>↓</div><div class="chip">App</div><div>↓</div><div class="chip">Support</div>
+          </div>
+        </div>
+        <div class="card p-6" style="border-color:var(--brand);">
+          <div class="text-xs font-semibold tracking-wide" style="color:var(--brand-dark);">MindBridge model</div>
+          <div class="mt-4 flex flex-col items-center gap-3 text-sm font-semibold">
+            <div class="chip" style="background:var(--brand-light); color:var(--brand-dark); border-color:var(--brand);">Exam context</div><div>↓</div>
+            <div class="chip" style="background:var(--brand-light); color:var(--brand-dark); border-color:var(--brand);">Stress event</div><div>↓</div>
+            <div class="chip" style="background:var(--brand-light); color:var(--brand-dark); border-color:var(--brand);">Pattern recognition</div><div>↓</div>
+            <div class="chip" style="background:var(--brand-light); color:var(--brand-dark); border-color:var(--brand);">Targeted support</div><div>↓</div>
+            <div class="chip" style="background:var(--gold-light); color:#5a3f0c; border-color:var(--gold);">Human support when appropriate</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="examshield-section" class="max-w-5xl mx-auto px-5 sm:px-8 py-14 border-t" style="border-color:var(--border);">
+      <h2 class="font-display font-semibold text-2xl sm:text-3xl text-center">🛡️ The ExamShield timeline</h2>
+      <p class="text-center mt-2" style="color:var(--ink-soft);">Built first for NEET aspirants — extending to JEE, UPSC, CA and university exams.</p>
+      <div class="mt-10 flex flex-col md:flex-row items-stretch gap-3">
+        ${['Preparation','Mock Tests','Exam Week','Results','Recovery'].map((t,i)=>`
+        <div class="flex-1 flex md:flex-col items-center gap-3">
+          <div class="card w-full p-4 text-center">
+            <div class="text-xs font-semibold" style="color:var(--brand-dark);">Phase ${i+1}</div>
+            <div class="font-display font-semibold mt-1">${t}</div>
+          </div>
+          ${i<4 ? '<div class="hidden md:block" style="color:var(--ink-soft);">↓</div><div class="md:hidden" style="color:var(--ink-soft);">→</div>' : ''}
+        </div>`).join('')}
+      </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-5 sm:px-8 py-14">
+      <h2 class="font-display font-semibold text-2xl sm:text-3xl text-center">Features</h2>
+      <div class="mt-8 grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+        ${[['📊','Daily Stress Check'],['📈','Mock Test Recovery'],['🧭','Burnout Pattern Support'],['🧘','Exam Calm Mode'],['💬','AI Conversation'],['👨‍⚕️','Professional Support'],['👥','Trusted Contact'],['🚨','I Need Help Now']].map(([icon,t])=>`
+        <div class="card p-5">
+          <div class="text-2xl">${icon}</div>
+          <div class="font-semibold mt-2 text-sm">${t}</div>
+        </div>`).join('')}
+      </div>
+    </section>
+
+    <section class="max-w-3xl mx-auto px-5 sm:px-8 py-14 border-t" style="border-color:var(--border);">
+      <div class="card p-6 sm:p-8">
+        <h2 class="font-display font-semibold text-xl">A note on safety</h2>
+        <p class="mt-3 text-sm" style="color:var(--ink-soft);">MindBridge is designed for wellbeing support and does not diagnose mental health conditions. It identifies patterns of distress from your own voluntary check-ins — not clinical assessments — and points toward human and professional support when it may help. It is not a substitute for a qualified mental health professional, and does not guarantee safety or prevent crises.</p>
+      </div>
+    </section>
+
+    <section class="max-w-3xl mx-auto px-5 sm:px-8 pb-20 text-center">
+      <h2 class="font-display font-semibold text-2xl sm:text-3xl">Start your MindBridge journey</h2>
+      <a href="#/signup" class="btn btn-primary text-base px-6 py-3 mt-6 inline-flex">Get Started</a>
+    </section>
+
+    <footer class="border-t py-8 text-center text-xs" style="border-color:var(--border); color:var(--ink-soft);">MindBridge AI — Version 1 demo product. Not a medical device.</footer>
+  </div>`;
+}
+
+/* =========================================================
+   PAGE: LOGIN / SIGNUP
+   ========================================================= */
+function authShell(inner){
+  return `
+  <div class="min-h-screen flex items-center justify-center px-5 py-10" style="background:var(--bg);">
+    <div class="w-full max-w-sm">
+      <a href="#/" class="flex items-center gap-2 justify-center mb-8">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:var(--brand-light); color:var(--brand-dark);">🌉</div>
+        <span class="font-display font-semibold text-lg">MindBridge AI</span>
+      </a>
+      <div class="card p-6 sm:p-7">${inner}</div>
+    </div>
+  </div>`;
+}
+function pageLogin(){
+  return authShell(`
+    <h1 class="font-display font-semibold text-xl">Welcome back</h1>
+    <p class="text-sm mt-1" style="color:var(--ink-soft);">Log in to continue your MindBridge space.</p>
+    <form onsubmit="return App.handleLogin(event)" class="mt-5 flex flex-col gap-3">
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Email</label><input type="email" id="li-email" required></div>
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Password</label><input type="password" id="li-password" required></div>
+      <div id="li-error" class="text-xs" style="color:var(--alert);"></div>
+      <button type="submit" class="btn btn-primary mt-1">Log in</button>
+    </form>
+    <button onclick="App.openForgotPassword()" class="text-xs mt-3 underline" style="color:var(--ink-soft);">Forgot password?</button>
+    <p class="text-sm mt-5" style="color:var(--ink-soft);">New here? <a href="#/signup" class="font-semibold" style="color:var(--brand-dark);">Create an account</a></p>
+  `);
+}
+function pageSignup(){
+  return authShell(`
+    <h1 class="font-display font-semibold text-xl">Create your space</h1>
+    <p class="text-sm mt-1" style="color:var(--ink-soft);">A few details to get started.</p>
+    <form onsubmit="return App.handleSignup(event)" class="mt-5 flex flex-col gap-3">
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Name</label><input type="text" id="su-name" required></div>
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Email</label><input type="email" id="su-email" required></div>
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Password</label><input type="password" id="su-password" minlength="4" required></div>
+      <div id="su-error" class="text-xs" style="color:var(--alert);"></div>
+      <button type="submit" class="btn btn-primary mt-1">Create account</button>
+    </form>
+    <p class="text-sm mt-5" style="color:var(--ink-soft);">Already have an account? <a href="#/login" class="font-semibold" style="color:var(--brand-dark);">Log in</a></p>
+  `);
+}
+
+/* =========================================================
+   ONBOARDING (6 steps)
+   ========================================================= */
+const EXAM_OPTIONS = [['NEET','🩺'],['JEE','⚙️'],['UPSC','📚'],['CA','💼'],['University exams','🎓'],['Other','✨']];
+const STAGE_OPTIONS = ['Starting preparation','Regular preparation','Intensive preparation','Mock-test phase','Final exam preparation','Results / waiting period','Repeated attempt','Drop year','Other'];
+const ACADEMIC_OPTIONS = ['On track','Falling behind','Unsure','Very overwhelmed','Improving','Struggling after repeated attempts'];
+const PRESSURE_SOURCES = ['My own expectations','Family expectations','Coaching pressure','Mock-test performance','Competition','Fear of failure','Repeated attempts','Financial pressure','Sleep problems','Future/career uncertainty','Other'];
+const SUPPORT_PREFS = [['Talk to AI','💬'],['Grounding exercises','🧘'],['Sleep support','💤'],['Understand my stress patterns','📊'],['Professional support information','👨‍⚕️'],['Trusted person','👥'],['Study-life balance support','📚']];
+
+function pageOnboarding(){
+  const data = requireData();
+  const step = data.profile.onboardingStep || 1;
+  const total = 6;
+  const stepBody = ({
+    1: obStep1, 2: obStep2, 3: obStep3, 4: obStep4, 5: obStep5, 6: obStep6
+  })[step](data);
+  return `
+  <div class="min-h-screen flex flex-col" style="background:var(--bg);">
+    <header class="px-5 sm:px-8 py-5 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--brand-light); color:var(--brand-dark);">🌉</div>
+        <span class="font-display font-semibold">MindBridge AI</span>
+      </div>
+      <span class="text-xs font-semibold" style="color:var(--ink-soft);">Step ${step} of ${total}</span>
+    </header>
+    <div class="px-5 sm:px-8">
+      <div class="max-w-xl mx-auto h-1.5 rounded-full overflow-hidden" style="background:var(--surface-alt);">
+        <div class="h-full rounded-full" style="width:${(step/total)*100}%; background:var(--brand); transition:width .3s;"></div>
+      </div>
+    </div>
+    <main class="flex-1 flex items-start sm:items-center justify-center px-5 sm:px-8 py-8">
+      <div class="w-full max-w-xl fade-in">${stepBody}</div>
+    </main>
+  </div>`;
+}
+function obNav(step, total, canBack){
+  return `
+  <div class="mt-7 flex items-center justify-between">
+    ${canBack ? `<button type="button" onclick="App.obBack()" class="btn btn-ghost">Back</button>` : `<span></span>`}
+    <button type="submit" class="btn btn-primary">${step===total?'Finish':'Continue'}</button>
+  </div>`;
+}
+function obStep1(data){
+  const sel = data.profile.exam;
+  return `
+  <h1 class="font-display font-semibold text-2xl">What are you preparing for?</h1>
+  <form onsubmit="return App.obSubmitExam(event)" class="mt-6 grid grid-cols-2 gap-3">
+    ${EXAM_OPTIONS.map(([label,icon],i)=>`
+      <button type="button" class="ob-option card p-4 cursor-pointer flex items-center gap-3 text-left w-full ${sel===label?'ring-2':''}" data-ob-group="exam" data-ob-value="${esc(label)}" aria-pressed="${sel===label}">
+        <input type="radio" id="ob-exam-${i}" name="exam" value="${esc(label)}" ${sel===label?'checked':''} required tabindex="-1" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;">
+        <span class="text-xl">${icon}</span><span class="font-semibold text-sm">${label}</span>
+      </button>`).join('')}
+    ${obNav(1,6,false)}
+  </form>`;
+}
+function obStep2(data){
+  const sel = data.profile.stage;
+  return `
+  <h1 class="font-display font-semibold text-2xl">Where are you currently in your preparation?</h1>
+  <form onsubmit="return App.obSubmitStage(event)" class="mt-6 flex flex-col gap-2">
+    ${STAGE_OPTIONS.map((label,i)=>`
+      <button type="button" class="ob-option card p-3.5 cursor-pointer flex items-center gap-3 text-left w-full" data-ob-group="stage" data-ob-value="${esc(label)}" aria-pressed="${sel===label}" style="${sel===label?'border-color:var(--brand); box-shadow:0 0 0 2px var(--brand) inset;':''}">
+        <input type="radio" id="ob-stage-${i}" name="stage" value="${esc(label)}" ${sel===label?'checked':''} required tabindex="-1" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;">
+        <span class="text-sm font-medium">${label}</span>
+      </button>`).join('')}
+    ${obNav(2,6,true)}
+  </form>`;
+}
+function obStep3(data){
+  const sel = data.profile.academicSelf; const pl = data.profile.pressureLevel ?? 5;
+  return `
+  <h1 class="font-display font-semibold text-2xl">How would you describe your current preparation?</h1>
+  <form onsubmit="return App.obSubmitAcademic(event)" class="mt-6 flex flex-col gap-2">
+    ${ACADEMIC_OPTIONS.map((label,i)=>`
+      <button type="button" class="ob-option card p-3.5 cursor-pointer flex items-center gap-3 text-left w-full" data-ob-group="academic" data-ob-value="${esc(label)}" aria-pressed="${sel===label}" style="${sel===label?'border-color:var(--brand); box-shadow:0 0 0 2px var(--brand) inset;':''}">
+        <input type="radio" id="ob-academic-${i}" name="academic" value="${esc(label)}" ${sel===label?'checked':''} required tabindex="-1" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;">
+        <span class="text-sm font-medium">${label}</span>
+      </button>`).join('')}
+    <div class="mt-4">
+      <label class="text-sm font-semibold">How much pressure do you currently feel from your studies?</label>
+      <div class="flex items-center gap-3 mt-2">
+        <input type="range" min="1" max="10" value="${pl}" id="ob-pressure" oninput="document.getElementById('ob-pressure-val').textContent=this.value">
+        <span id="ob-pressure-val" class="text-sm font-semibold w-6 text-center">${pl}</span>
+      </div>
+    </div>
+    ${obNav(3,6,true)}
+  </form>`;
+}
+function obStep4(data){
+  const sel = data.profile.pressureSources || [];
+  return `
+  <h1 class="font-display font-semibold text-2xl">Sources of pressure</h1>
+  <p class="text-sm mt-1" style="color:var(--ink-soft);">Select all that apply.</p>
+  <form onsubmit="return App.obSubmitPressureSources(event)" class="mt-6 grid sm:grid-cols-2 gap-2">
+    ${PRESSURE_SOURCES.map(label=>`
+      <label class="card p-3 cursor-pointer flex items-center gap-2.5">
+        <input type="checkbox" name="src" value="${esc(label)}" ${sel.includes(label)?'checked':''} class="w-4 h-4" style="accent-color:var(--brand);">
+        <span class="text-sm">${label}</span>
+      </label>`).join('')}
+    ${obNav(4,6,true)}
+  </form>`;
+}
+function obStep5(data){
+  const b = data.profile.wellbeingBaseline || {stress:5,sleep:5,motivation:5,overwhelmed:5,support:5};
+  const rows = [['stress','Stress'],['sleep','Sleep quality'],['motivation','Motivation'],['overwhelmed','Feeling overwhelmed'],['support','Sense of support']];
+  return `
+  <h1 class="font-display font-semibold text-2xl">How have you been feeling recently?</h1>
+  <form onsubmit="return App.obSubmitBaseline(event)" class="mt-6 flex flex-col gap-5">
+    ${rows.map(([k,label])=>`
+      <div>
+        <div class="flex justify-between text-sm font-semibold"><span>${label}</span><span id="ob-${k}-val">${b[k]}</span></div>
+        <input type="range" min="1" max="10" value="${b[k]}" id="ob-${k}" oninput="document.getElementById('ob-${k}-val').textContent=this.value">
+      </div>`).join('')}
+    ${obNav(5,6,true)}
+  </form>`;
+}
+function obStep6(data){
+  const sel = data.profile.supportPrefs || [];
+  return `
+  <h1 class="font-display font-semibold text-2xl">What kind of support would feel useful to you?</h1>
+  <form onsubmit="return App.obSubmitFinish(event)" class="mt-6 grid sm:grid-cols-2 gap-2">
+    ${SUPPORT_PREFS.map(([label,icon])=>`
+      <label class="card p-3 cursor-pointer flex items-center gap-2.5">
+        <input type="checkbox" name="pref" value="${esc(label)}" ${sel.includes(label)?'checked':''} class="w-4 h-4" style="accent-color:var(--brand);">
+        <span class="text-sm">${icon} ${label}</span>
+      </label>`).join('')}
+    ${obNav(6,6,true)}
+  </form>`;
+}
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+function greeting(){
+  const h = new Date().getHours();
+  if(h<12) return 'Good morning'; if(h<17) return 'Good afternoon'; return 'Good evening';
+}
+function pageDashboard(){
+  const user = authService.currentUser(); const data = requireData();
+  const p = data.profile;
+  const last = data.checkins[data.checkins.length-1];
+  const pattern = patternService.level(data.checkins);
+  const lastMock = data.mockTests[data.mockTests.length-1];
+  const doneToday = last && last.date===todayISO();
+  return `
+  <div class="max-w-4xl mx-auto px-5 sm:px-8 py-7 flex flex-col gap-5">
+    <div>
+      <h1 class="font-display font-semibold text-2xl sm:text-3xl">${greeting()}, ${esc(user.name.split(' ')[0])}.</h1>
+      <p class="mt-1" style="color:var(--ink-soft);">Let's check in with how you're doing today.</p>
+    </div>
+
+    ${data.resultPeriodActive ? `
+    <div class="card p-4 flex items-center justify-between gap-3" style="border-color:var(--gold); background:var(--gold-light);">
+      <div class="text-sm font-semibold" style="color:#5a3f0c;">⏳ Result Period Support is active.</div>
+      <a href="#/examshield" class="btn btn-gold !py-1.5 !px-3 text-xs">Open</a>
+    </div>` : ''}
+
+    <div class="card p-5 flex items-center justify-between gap-4 flex-wrap">
+      <div>
+        <div class="text-xs font-semibold" style="color:var(--brand-dark);">🛡️ ExamShield Active</div>
+        <div class="font-display font-semibold text-lg mt-1">${esc(p.exam||'—')} Preparation</div>
+        <div class="text-sm mt-0.5" style="color:var(--ink-soft);">Stage: ${esc(phaseLabel(data.phase))}</div>
+      </div>
+      <a href="#/examshield" class="btn btn-primary">Open ExamShield</a>
+    </div>
+
+    <div class="card p-5">
+      <div class="flex items-center justify-between">
+        <h2 class="font-display font-semibold text-lg">Today's wellbeing</h2>
+        ${doneToday ? '<span class="chip">✓ Checked in today</span>':''}
+      </div>
+      ${last ? `
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+        ${statBox('Stress', last.stress)}${statBox('Sleep', last.sleep)}${statBox('Motivation', last.motivation)}${statBox('Pressure', last.pressure)}
+      </div>` : `<p class="text-sm mt-3" style="color:var(--ink-soft);">You haven't completed a check-in yet.</p>`}
+      ${!doneToday ? `<a href="#/examshield/check-in" class="btn btn-primary mt-4">Complete 60-second check-in</a>` : `<a href="#/wellbeing" class="btn btn-outline mt-4">View wellbeing trends</a>`}
+    </div>
+
+    ${pattern.level==='elevated' ? `
+    <div class="card p-5" style="border-color:var(--alert);">
+      <div class="font-semibold text-sm" style="color:var(--alert);">⚠️ Recent pattern</div>
+      <p class="text-sm mt-2">${pattern.message} This is based on your voluntary check-ins and is not a medical diagnosis.</p>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <a href="#/chat" class="btn btn-outline !py-1.5 !px-3 text-xs">💬 Talk</a>
+        <a href="#/examshield/exam-calm" class="btn btn-outline !py-1.5 !px-3 text-xs">🧘 Grounding</a>
+        <a href="#/support" class="btn btn-outline !py-1.5 !px-3 text-xs">👨‍⚕️ Professional Support</a>
+      </div>
+    </div>` : ''}
+
+    <div class="grid sm:grid-cols-2 gap-4">
+      <a href="#/examshield/mock-test" class="card p-5 block hover:opacity-90">
+        <div class="font-semibold">📈 Mock Test</div>
+        <p class="text-sm mt-1" style="color:var(--ink-soft);">${lastMock? `Last: ${lastMock.score}/${lastMock.max}` : 'Log a mock test result'}</p>
+      </a>
+      <a href="#/examshield/exam-calm" class="card p-5 block hover:opacity-90">
+        <div class="font-semibold">🧘 Exam Calm</div>
+        <p class="text-sm mt-1" style="color:var(--ink-soft);">Breathing, grounding & sleep support</p>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-3 gap-3">
+      <a href="#/examshield/check-in" class="btn btn-outline flex-col !py-4 h-auto text-xs gap-1"><span class="text-lg">📊</span>Check-in</a>
+      <a href="#/examshield/exam-calm" class="btn btn-outline flex-col !py-4 h-auto text-xs gap-1"><span class="text-lg">🧘</span>Exam Calm</a>
+      <a href="#/chat" class="btn btn-outline flex-col !py-4 h-auto text-xs gap-1"><span class="text-lg">💬</span>Talk to MindBridge</a>
+    </div>
+  </div>`;
+}
+function statBox(label, val){
+  return `<div class="rounded-xl p-3 text-center" style="background:var(--surface-alt);">
+    <div class="text-xl font-display font-semibold">${val}<span class="text-xs" style="color:var(--ink-soft);">/10</span></div>
+    <div class="text-[.7rem] mt-0.5 font-semibold" style="color:var(--ink-soft);">${label}</div>
+  </div>`;
+}
+function phaseLabel(key){
+  return ({preparation:'Preparation',mock:'Mock Test Phase','pre-exam':'Pre-Exam',results:'Result Period',recovery:'Recovery'})[key] || 'Preparation';
+}
+
+/* =========================================================
+   EXAMSHIELD HOME
+   ========================================================= */
+function pageExamShieldHome(){
+  const data = requireData();
+  const pattern = patternService.level(data.checkins);
+  const last = data.checkins[data.checkins.length-1];
+  const lastMock = data.mockTests[data.mockTests.length-1];
+  return `
+  <div class="max-w-4xl mx-auto px-5 sm:px-8 py-7 flex flex-col gap-5">
+    <div>
+      <h1 class="font-display font-semibold text-2xl sm:text-3xl">🛡️ ExamShield</h1>
+      <p class="mt-1" style="color:var(--ink-soft);">${esc(data.profile.exam||'—')} Preparation</p>
+    </div>
+
+    <div class="card p-5">
+      <div class="text-xs font-semibold" style="color:var(--brand-dark);">CURRENT PHASE</div>
+      <div class="font-display font-semibold text-xl mt-1">${phaseLabel(data.phase)}</div>
+      <div class="grid grid-cols-3 gap-3 mt-4">
+        ${last ? statBox('Stress',last.stress)+statBox('Sleep',last.sleep)+statBox('Motivation',last.motivation) : '<p class="text-sm col-span-3" style="color:var(--ink-soft);">No check-ins yet.</p>'}
+      </div>
+      ${pattern.level==='elevated' ? `
+        <div class="mt-4 p-3 rounded-xl text-sm" style="background:var(--alert-light); color:var(--alert);">⚠️ ${pattern.message}<br>
+          <span style="color:var(--ink-soft);">Would you like additional support?</span>
+        </div>
+        <div class="flex flex-wrap gap-2 mt-3">
+          <a href="#/chat" class="btn btn-outline !py-1.5 !px-3 text-xs">Talk</a>
+          <a href="#/examshield/exam-calm" class="btn btn-outline !py-1.5 !px-3 text-xs">Grounding</a>
+          <a href="#/support" class="btn btn-outline !py-1.5 !px-3 text-xs">Professional Support</a>
+        </div>` : ''}
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-4">
+      <a href="#/examshield/timeline" class="card p-5"><div class="font-semibold">🗺️ Your ExamShield Journey</div><p class="text-sm mt-1" style="color:var(--ink-soft);">View the 5-phase timeline</p></a>
+      <a href="#/examshield/check-in" class="card p-5"><div class="font-semibold">📊 Daily Check-in</div><p class="text-sm mt-1" style="color:var(--ink-soft);">60-second wellbeing check</p></a>
+      <a href="#/examshield/mock-test" class="card p-5"><div class="font-semibold">📈 Mock Test Recovery</div><p class="text-sm mt-1" style="color:var(--ink-soft);">${lastMock?`Last: ${lastMock.score}/${lastMock.max}`:'Log a result and process it'}</p></a>
+      <a href="#/examshield/exam-calm" class="card p-5"><div class="font-semibold">🧘 Exam Calm</div><p class="text-sm mt-1" style="color:var(--ink-soft);">Available whenever you need it</p></a>
+      <a href="#/examshield/recovery" class="card p-5 sm:col-span-2"><div class="font-semibold">🌱 Recovery Mode</div><p class="text-sm mt-1" style="color:var(--ink-soft);">A gentle 5-step path back to steady ground</p></a>
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   CHECK-IN
+   ========================================================= */
+function pageCheckIn(){
+  return `
+  <div class="max-w-xl mx-auto px-5 sm:px-8 py-7">
+    <h1 class="font-display font-semibold text-2xl">Your 60-second check-in</h1>
+    <p class="mt-1 text-sm" style="color:var(--ink-soft);">Voluntary and private — used only to notice patterns over time.</p>
+    <form onsubmit="return App.submitCheckIn(event)" class="mt-6 flex flex-col gap-6">
+      ${ciSlider('stress','How stressed do you feel today?',5)}
+      ${ciSlider('sleep','How was your sleep?',5,'Very poor','Excellent')}
+      ${ciSlider('overwhelmed','Did studying make you feel overwhelmed today?',5,'Never','Very often')}
+      ${ciSlider('pressure','Are you feeling pressure from others?',5)}
+      ${ciSlider('hope','How hopeful do you feel about your preparation today?',5)}
+      ${ciSlider('motivation','How motivated do you feel?',5)}
+      <button type="submit" class="btn btn-primary">Save Check-in</button>
+    </form>
+  </div>`;
+}
+function ciSlider(id,label,val,lo,hi){
+  return `
+  <div>
+    <div class="flex justify-between text-sm font-semibold"><span>${label}</span><span id="ci-${id}-val">${val}</span></div>
+    <input type="range" min="0" max="10" value="${val}" id="ci-${id}" oninput="document.getElementById('ci-${id}-val').textContent=this.value">
+    ${lo? `<div class="flex justify-between text-[.7rem] mt-1" style="color:var(--ink-soft);"><span>${lo}</span><span>${hi}</span></div>` : ''}
+  </div>`;
+}
+
+/* =========================================================
+   TIMELINE
+   ========================================================= */
+const TIMELINE_PHASES = [
+  { key:'preparation', title:'Preparation', challenges:['😰 Anxiety','😴 Sleep deprivation','📚 Study overload','😔 Isolation','👪 Family expectations','🎓 Coaching pressure'],
+    support:['Daily wellbeing check-ins','Burnout pattern support','Study-life balance guidance','Anonymous AI conversation','Sleep support','Grounding'] },
+  { key:'mock', title:'Mock Test', challenges:['😔 Disappointment','😰 Anxiety','😡 Frustration','😞 Hopelessness'],
+    support:['Emotional support','Grounding','Pattern check','Human support pathway'], cta:{label:'Open Mock Test Recovery', href:'/examshield/mock-test'} },
+  { key:'pre-exam', title:'Pre-Exam', challenges:['😬 Exam-week anxiety','😴 Disrupted sleep','🌀 Racing thoughts'],
+    support:['Breathing','Anxiety management','Sleep support','AI conversation','Professional support'], cta:{label:'Enter Exam Calm Mode', href:'/examshield/exam-calm'} },
+  { key:'results', title:'Results', challenges:['😟 Result anxiety','😔 Shame after poor performance','👪 Family pressure'],
+    support:['Talk Now','Get Support','Contact Trusted Person','Grounding'], cta:{label:'Open Result Period Support', href:'/examshield'} },
+  { key:'recovery', title:'Recovery', challenges:['😞 Disappointment','😔 Shame','😟 Fear about the future','😓 Hopelessness'],
+    support:['Emotional stabilization','Human support','Trusted contact','Professional care pathway','Future planning (after stabilization)'], cta:{label:'Enter Recovery Mode', href:'/examshield/recovery'} }
+];
+function pageTimeline(){
+  const data = requireData();
+  const activeKey = data.phase;
+  return `
+  <div class="max-w-4xl mx-auto px-5 sm:px-8 py-7">
+    <h1 class="font-display font-semibold text-2xl">Your ExamShield Journey</h1>
+    <div class="mt-6 flex overflow-x-auto scrollbar-thin gap-2 pb-2">
+      ${TIMELINE_PHASES.map((p,i)=>`
+        <button onclick="App.setActiveTimelinePhase('${p.key}')" id="tl-tab-${p.key}"
+          class="shrink-0 px-4 py-2 rounded-full text-sm font-semibold border" 
+          style="${activeKey===p.key||(!window.__tlSel && p.key===TIMELINE_PHASES[0].key)?'background:var(--brand); color:#fff; border-color:var(--brand);':'background:var(--surface); border-color:var(--border); color:var(--ink-soft);'}">
+          ${i+1}. ${p.title}
+        </button>`).join('')}
+    </div>
+    <div id="tl-detail" class="mt-6">${timelineDetail(window.__tlSel || activeKey || 'preparation')}</div>
+  </div>`;
+}
+function timelineDetail(key){
+  const p = TIMELINE_PHASES.find(x=>x.key===key) || TIMELINE_PHASES[0];
+  return `
+  <div class="card p-6 fade-in">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <h2 class="font-display font-semibold text-xl">${p.title}</h2>
+      ${p.cta ? `<a href="#${p.cta.href}" class="btn btn-primary !py-1.5 !px-3 text-xs">${p.cta.label}</a>` : ''}
+    </div>
+    <div class="grid sm:grid-cols-2 gap-6 mt-5">
+      <div>
+        <div class="text-xs font-semibold" style="color:var(--ink-soft);">COMMON CHALLENGES</div>
+        <div class="flex flex-wrap gap-2 mt-2">${p.challenges.map(c=>`<span class="chip">${c}</span>`).join('')}</div>
+      </div>
+      <div>
+        <div class="text-xs font-semibold" style="color:var(--ink-soft);">MINDBRIDGE SUPPORT</div>
+        <ul class="mt-2 text-sm flex flex-col gap-1.5">${p.support.map(s=>`<li>• ${s}</li>`).join('')}</ul>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   MOCK TEST
+   ========================================================= */
+const MOCK_EMOTIONS = [['disappointed','😔','Disappointed'],['anxious','😰','Anxious'],['frustrated','😡','Frustrated'],['hopeless','😞','Hopeless'],['okay','🙂','Okay'],['proud','😊','Proud']];
+const MOCK_EMOTION_RESPONSES = {
+  disappointed: "You worked toward this test, so it makes sense that a disappointing result may feel heavy. One score doesn't tell the entire story of your preparation.",
+  anxious: "It's understandable to feel anxious after a test that mattered to you. That anxiety doesn't mean something is wrong with your preparation — it means you care about the outcome.",
+  frustrated: "Frustration after a mock test is common, especially when the result doesn't reflect the effort you put in. That frustration is valid.",
+  hopeless: "Feeling hopeless after a result is a heavy place to be. You don't have to figure everything out right now — let's take this one step at a time.",
+  okay: "It's good that this one feels manageable. Even steady moments are worth noticing.",
+  proud: "That's genuinely worth recognizing — take a moment to sit with that feeling."
+};
+function pageMockTest(){
+  const data = requireData();
+  const tests = data.mockTests.slice().reverse();
+  return `
+  <div class="max-w-xl mx-auto px-5 sm:px-8 py-7 flex flex-col gap-6">
+    <h1 class="font-display font-semibold text-2xl">Mock Test Recovery</h1>
+
+    <div class="card p-5">
+      <h2 class="font-semibold">Log a mock test result</h2>
+      <form onsubmit="return App.submitMockTest(event)" class="mt-3 grid grid-cols-2 gap-3">
+        <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Score</label><input type="number" id="mt-score" required></div>
+        <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Max marks</label><input type="number" id="mt-max" value="720" required></div>
+        <div class="col-span-2"><label class="text-xs font-semibold" style="color:var(--ink-soft);">Optional note — what happened?</label><textarea id="mt-note" rows="2"></textarea></div>
+        <button type="submit" class="btn btn-primary col-span-2">Save result</button>
+      </form>
+    </div>
+
+    <div id="mt-emotion-flow"></div>
+
+    ${tests.length ? `
+    <div class="card p-5">
+      <h2 class="font-semibold">History</h2>
+      <div class="mt-3 flex flex-col gap-2">
+        ${tests.slice(0,6).map(t=>`
+          <div class="flex items-center justify-between text-sm p-2 rounded-lg" style="background:var(--surface-alt);">
+            <span>${fmtDate(t.date)}</span><span class="font-semibold">${t.score}/${t.max}</span>
+          </div>`).join('')}
+      </div>
+    </div>` : `<div class="card p-5"><p class="text-sm" style="color:var(--ink-soft);">Your mock-test history will appear here.</p></div>`}
+  </div>`;
+}
+function mockEmotionPicker(mockId){
+  return `
+  <div class="card p-5 fade-in">
+    <h2 class="font-semibold">How did your mock test feel?</h2>
+    <div class="grid grid-cols-3 gap-2 mt-3">
+      ${MOCK_EMOTIONS.map(([key,icon,label])=>`
+        <button onclick="App.pickMockEmotion('${mockId}','${key}')" class="card p-3 text-center hover:opacity-80">
+          <div class="text-xl">${icon}</div><div class="text-xs font-semibold mt-1">${label}</div>
+        </button>`).join('')}
+    </div>
+  </div>`;
+}
+function mockEmotionResponse(mockId, emotionKey){
+  return `
+  <div class="card p-5 fade-in">
+    <p class="text-sm">${MOCK_EMOTION_RESPONSES[emotionKey]}</p>
+    <div class="mt-4 font-semibold text-sm">What would help right now?</div>
+    <div class="grid grid-cols-2 gap-2 mt-2">
+      <a href="#/chat" class="btn btn-outline !py-2 text-xs">💬 Talk about it</a>
+      <a href="#/examshield/exam-calm" class="btn btn-outline !py-2 text-xs">🧘 Calm down first</a>
+      <button onclick="App.showMockPattern('${mockId}')" class="btn btn-outline !py-2 text-xs">📊 Look at the pattern</button>
+      <a href="#/examshield/recovery" class="btn btn-outline !py-2 text-xs">📚 Make a recovery plan</a>
+      <a href="#/trusted-contact" class="btn btn-outline !py-2 text-xs col-span-2">👥 Talk to someone</a>
+    </div>
+  </div>`;
+}
+function mockPatternView(mockId){
+  const data = requireData();
+  const idx = data.mockTests.findIndex(m=>m.id===mockId);
+  const t = data.mockTests[idx]; const prev = data.mockTests[idx-1];
+  const pct = ((t.score/t.max)*100).toFixed(1);
+  const changeLine = prev ? `Your score changed from ${prev.score} to ${t.score}.` : `This is your first logged mock test.`;
+  return `
+  <div class="card p-5 fade-in">
+    <div class="text-sm">Current percentage: <strong>${pct}%</strong></div>
+    <div class="text-sm mt-1">${changeLine}</div>
+    <p class="mt-3 text-sm font-semibold">Would you like to focus on how you're feeling first, or look at the academic pattern?</p>
+    <div class="grid grid-cols-2 gap-2 mt-2">
+      <a href="#/chat" class="btn btn-outline !py-2 text-xs">Emotional Support</a>
+      <a href="#/wellbeing" class="btn btn-outline !py-2 text-xs">Review Performance</a>
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   EXAM CALM MODE
+   ========================================================= */
+function pageExamCalm(){
+  return `
+  <div class="max-w-xl mx-auto px-5 sm:px-8 py-7 flex flex-col gap-6">
+    <div>
+      <h1 class="font-display font-semibold text-2xl">Exam Calm Mode</h1>
+      <p class="text-sm mt-1" style="color:var(--ink-soft);">Slow things down. One moment at a time.</p>
+    </div>
+
+    <div class="card p-6 flex flex-col items-center">
+      <h2 class="font-semibold self-start">Breathing exercise</h2>
+      <div class="mt-6 relative w-40 h-40 flex items-center justify-center">
+        <div id="breath-circle" class="breathe-circle absolute inset-6 rounded-full flex items-center justify-center text-sm font-semibold" style="background:var(--brand-light); color:var(--brand-dark);">
+          <span id="breath-label">Ready</span>
+        </div>
+        <div class="absolute inset-0 rounded-full" style="border:1.5px solid var(--border);"></div>
+      </div>
+      <div class="flex items-center gap-2 mt-6">
+        <select id="breath-duration" class="!w-auto text-sm"><option value="60">1 minute</option><option value="180">3 minutes</option><option value="300">5 minutes</option></select>
+        <button onclick="App.breathStart()" class="btn btn-primary !py-2 text-sm">Start</button>
+        <button onclick="App.breathPause()" class="btn btn-outline !py-2 text-sm">Pause</button>
+        <button onclick="App.breathRestart()" class="btn btn-ghost !py-2 text-sm">Restart</button>
+      </div>
+      <div id="breath-timer" class="text-xs mt-2" style="color:var(--ink-soft);"></div>
+    </div>
+
+    <div class="card p-6">
+      <h2 class="font-semibold">Grounding exercise — 5-4-3-2-1</h2>
+      <div id="grounding-body" class="mt-4">${groundingStepView(0)}</div>
+    </div>
+
+    <div class="card p-6">
+      <h2 class="font-semibold">Sleep support</h2>
+      <p class="text-sm mt-1" style="color:var(--ink-soft);">Prepare for sleep</p>
+      <div class="grid grid-cols-2 gap-2 mt-3">
+        <button onclick="App.startWindDown()" class="btn btn-outline !py-2 text-xs">2-minute wind-down</button>
+        <button onclick="App.breathStart(); document.getElementById('breath-circle').scrollIntoView({behavior:'smooth'})" class="btn btn-outline !py-2 text-xs">Breathing</button>
+        <button onclick="toast('Body relaxation: tense and release each muscle group, starting from your toes up to your shoulders.')" class="btn btn-outline !py-2 text-xs">Body relaxation</button>
+        <button onclick="toast('Reminder set: try to switch off screens 20 minutes before sleep.')" class="btn btn-outline !py-2 text-xs">Screen-off reminder</button>
+        <a href="#/chat" class="btn btn-outline !py-2 text-xs col-span-2">Talk to MindBridge</a>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+      <a href="#/chat" class="btn btn-primary">💬 Talk to MindBridge</a>
+      <a href="#/support" class="btn btn-outline">👨‍⚕️ Find Professional Support</a>
+    </div>
+  </div>`;
+}
+function groundingStepView(step){
+  const steps = [
+    {n:5, sense:'see'},{n:4, sense:'feel'},{n:3, sense:'hear'},{n:2, sense:'smell'},{n:1, sense:'taste'}
+  ];
+  if(step>=steps.length){
+    return `<div class="fade-in text-center py-3"><p class="font-semibold">Nicely done.</p><p class="text-sm mt-1" style="color:var(--ink-soft);">Take one more slow breath before continuing.</p><button onclick="App.groundingRestart()" class="btn btn-outline mt-3 !py-1.5 text-xs">Restart</button></div>`;
+  }
+  const s = steps[step];
+  return `
+  <div class="fade-in">
+    <div class="text-sm font-semibold" style="color:var(--brand-dark);">Step ${step+1} of 5</div>
+    <p class="mt-2 text-lg font-display">${s.n} things you can ${s.sense}</p>
+    <button onclick="App.groundingNext()" class="btn btn-primary mt-4 !py-2 text-sm">Next</button>
+  </div>`;
+}
+
+/* =========================================================
+   RECOVERY MODE
+   ========================================================= */
+function pageRecovery(){
+  const steps = [
+    {title:'Emotional Stabilization', items:['Breathing','Grounding','AI conversation'], href:'/examshield/exam-calm'},
+    {title:'Human Support', items:['Identify someone you trust'], href:'/trusted-contact'},
+    {title:'Trusted Contact', items:['Contact trusted person'], href:'/trusted-contact'},
+    {title:'Professional Care Pathway', items:['Find qualified professional support'], href:'/support'},
+    {title:'Future Planning', items:['Career planning','Study planning','Alternative pathways','Next attempt planning'], href:'/wellbeing', note:'Only after stabilization.'}
+  ];
+  return `
+  <div class="max-w-xl mx-auto px-5 sm:px-8 py-7 flex flex-col gap-6">
+    <div>
+      <h1 class="font-display font-semibold text-2xl">Recovery Mode</h1>
+      <p class="text-sm mt-1" style="color:var(--ink-soft);">You don't have to solve everything today.</p>
+    </div>
+    <div class="flex flex-col gap-3">
+      ${steps.map((s,i)=>`
+      <div class="card p-5">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm" style="background:var(--brand-light); color:var(--brand-dark);">${i+1}</div>
+          <div class="font-semibold">${s.title}</div>
+        </div>
+        <ul class="text-sm mt-2 ml-11" style="color:var(--ink-soft);">${s.items.map(it=>`<li>• ${it}</li>`).join('')}</ul>
+        ${s.note?`<p class="text-xs mt-2 ml-11 font-semibold" style="color:var(--gold);">${s.note}</p>`:''}
+        <a href="#${s.href}" class="btn btn-outline !py-1.5 !px-3 text-xs mt-3 ml-11 inline-flex">Open</a>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   CHAT
+   ========================================================= */
+function pageChat(){
+  const data = requireData();
+  const msgs = data.conversations;
+  const prompts = aiService.suggestedPrompts();
+  return `
+  <div class="max-w-2xl mx-auto px-0 sm:px-8 py-0 sm:py-7 flex flex-col" style="height:calc(100vh - 56px);">
+    <div class="hidden sm:flex items-center justify-between px-0 pb-4">
+      <h1 class="font-display font-semibold text-2xl">Talk to MindBridge</h1>
+      <div class="flex gap-2">
+        <button onclick="App.newConversation()" class="btn btn-outline !py-1.5 !px-3 text-xs">New conversation</button>
+        <button onclick="App.clearConversation()" class="btn btn-ghost !py-1.5 !px-3 text-xs">Clear</button>
+      </div>
+    </div>
+    <div id="chat-scroll" class="flex-1 overflow-y-auto scrollbar-thin px-5 sm:px-0 py-4 flex flex-col gap-3">
+      ${msgs.length===0? `
+      <div class="text-center py-8">
+        <p class="text-sm" style="color:var(--ink-soft);">Start a conversation whenever you need a space to talk.</p>
+      </div>` : msgs.map(m=>`
+        <div class="msg-bubble ${m.role==='ai'?'msg-ai':'msg-user'}">${esc(m.text)}</div>`).join('')}
+      <div id="chat-typing" class="hidden msg-bubble msg-ai"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>
+    </div>
+    ${msgs.length===0? `
+    <div class="px-5 sm:px-0 pb-2 flex flex-wrap gap-2">
+      ${prompts.map(p=>`<button onclick="App.sendChat(${JSON.stringify(p)})" class="chip hover:opacity-80" style="cursor:pointer;">${esc(p)}</button>`).join('')}
+    </div>` : ''}
+    <form onsubmit="return App.handleChatSubmit(event)" class="px-5 sm:px-0 pb-5 sm:pb-0 pt-2 flex gap-2 border-t sm:border-t-0" style="border-color:var(--border);">
+      <input type="text" id="chat-input" placeholder="Type how you're feeling…" autocomplete="off" class="flex-1">
+      <button type="submit" class="btn btn-primary !px-4">Send</button>
+    </form>
+  </div>`;
+}
+function scrollChatToBottom(){ const el=document.getElementById('chat-scroll'); if(el) el.scrollTop = el.scrollHeight; }
+
+/* =========================================================
+   WELLBEING
+   ========================================================= */
+function pageWellbeing(){
+  const data = requireData();
+  const range = window.__wbRange || 30;
+  return `
+  <div class="max-w-3xl mx-auto px-5 sm:px-8 py-7 flex flex-col gap-6">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <h1 class="font-display font-semibold text-2xl">My Wellbeing</h1>
+      <div class="flex gap-1">
+        ${[7,30,90].map(r=>`<button onclick="App.setWbRange(${r})" class="chip" style="${range===r?'background:var(--brand); color:#fff; border-color:var(--brand);':''} cursor:pointer;">${r}d</button>`).join('')}
+      </div>
+    </div>
+    <div id="wb-charts">${wellbeingCharts(range)}</div>
+    <div class="card p-5">
+      <h2 class="font-semibold">Insights</h2>
+      ${insightsList(data)}
+    </div>
+  </div>`;
+}
+function wellbeingCharts(range){
+  const data = requireData();
+  const cutoff = daysAgo(range);
+  const points = data.checkins.filter(c=>c.date>=cutoff);
+  if(points.length===0) return `<div class="card p-5"><p class="text-sm" style="color:var(--ink-soft);">No check-ins in this range yet. <a href="#/examshield/check-in" class="font-semibold underline">Start a check-in</a>.</p></div>`;
+  return ['stress','sleep','motivation','overwhelmed'].map(key=>`
+    <div class="card p-5 mb-4">
+      <div class="font-semibold text-sm mb-2">${key[0].toUpperCase()+key.slice(1)} over time</div>
+      ${svgLineChart(points, key)}
+    </div>`).join('');
+}
+function svgLineChart(points, key){
+  const w=600, h=140, pad=24;
+  const xs = points.map((p,i)=> pad + (i*(w-2*pad))/Math.max(1,points.length-1));
+  const ys = points.map(p=> h-pad - ((p[key]/10)*(h-2*pad)));
+  const path = xs.map((x,i)=> (i===0?'M':'L')+x.toFixed(1)+','+ys[i].toFixed(1)).join(' ');
+  const dots = xs.map((x,i)=>`<circle cx="${x.toFixed(1)}" cy="${ys[i].toFixed(1)}" r="3" fill="var(--brand)"></circle>`).join('');
+  return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-auto" role="img" aria-label="${key} trend chart">
+    <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="var(--border)"></line>
+    <path d="${path}" fill="none" stroke="var(--brand)" stroke-width="2"></path>
+    ${dots}
+  </svg>`;
+}
+function insightsList(data){
+  const list = patternService.insights(data.checkins);
+  if(list.length===0) return `<p class="text-sm mt-2" style="color:var(--ink-soft);">Keep checking in and insights will appear here over time.</p>`;
+  return `<div class="flex flex-col gap-3 mt-3">
+    ${list.map(t=>`
+    <div class="p-3 rounded-xl text-sm" style="background:var(--surface-alt);">
+      ${t}
+      <div class="text-xs font-semibold mt-1" style="color:var(--ink-soft);">This is an observation from your check-in data, not a medical conclusion.</div>
+    </div>`).join('')}
+    <div>
+      <div class="text-xs font-semibold" style="color:var(--ink-soft);">WHAT MIGHT HELP?</div>
+      <div class="flex flex-wrap gap-2 mt-2">
+        <a href="#/examshield/exam-calm" class="chip" style="cursor:pointer;">Take a short break</a>
+        <a href="#/examshield/exam-calm" class="chip" style="cursor:pointer;">Grounding</a>
+        <a href="#/chat" class="chip" style="cursor:pointer;">Talk to someone</a>
+        <a href="#/examshield/exam-calm" class="chip" style="cursor:pointer;">Sleep support</a>
+        <a href="#/support" class="chip" style="cursor:pointer;">Professional support</a>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   SUPPORT (professional support directory + need-help pathways)
+   ========================================================= */
+function pageSupport(){
+  return `
+  <div class="max-w-3xl mx-auto px-5 sm:px-8 py-7 flex flex-col gap-6">
+    <h1 class="font-display font-semibold text-2xl">Support</h1>
+
+    <div class="card p-5" style="border-color:var(--alert);">
+      <div class="font-semibold" style="color:var(--alert);">🚨 Need help right now?</div>
+      <p class="text-sm mt-1" style="color:var(--ink-soft);">If you're in immediate danger or believe you may act on thoughts of harming yourself, contact local emergency services or go to the nearest emergency department.</p>
+      <button onclick="App.openNeedHelp()" class="btn btn-alert mt-3">I Need Help Now</button>
+    </div>
+
+    <div class="card p-5">
+      <h2 class="font-semibold">Professional support directory</h2>
+      <p class="text-xs mt-1" style="color:var(--ink-soft);">Version 1 demo entries. Connect a verified directory/API in production.</p>
+      <div class="grid sm:grid-cols-3 gap-2 mt-3">
+        <select id="pd-type" onchange="App.filterDirectory()"><option value="">All types</option>${['Psychologist','Psychiatrist','Counsellor','Emergency support','Hospital / emergency department'].map(t=>`<option>${t}</option>`).join('')}</select>
+        <select id="pd-mode" onchange="App.filterDirectory()"><option value="">Online / in-person</option><option>Online</option><option>In-person</option></select>
+        <input type="text" id="pd-location" placeholder="Location" oninput="App.filterDirectory()">
+      </div>
+      <div id="pd-list" class="mt-3 flex flex-col gap-2">${directoryList(professionalDirectory)}</div>
+    </div>
+  </div>`;
+}
+function directoryList(list){
+  if(list.length===0) return `<p class="text-sm" style="color:var(--ink-soft);">No matching entries.</p>`;
+  return list.map(p=>`
+  <div class="p-3 rounded-xl flex items-center justify-between gap-3" style="background:var(--surface-alt);">
+    <div>
+      <div class="font-semibold text-sm">${esc(p.name)}</div>
+      <div class="text-xs" style="color:var(--ink-soft);">${p.type} · ${p.mode} · ${p.location}</div>
+    </div>
+    <span class="chip">Demo</span>
+  </div>`).join('');
+}
+
+/* =========================================================
+   TRUSTED CONTACT
+   ========================================================= */
+function pageTrustedContact(){
+  const data = requireData();
+  const contacts = data.trustedContacts;
+  return `
+  <div class="max-w-xl mx-auto px-5 sm:px-8 py-7 flex flex-col gap-5">
+    <div class="flex items-center justify-between">
+      <h1 class="font-display font-semibold text-2xl">Trusted Contact</h1>
+      <button onclick="App.openContactForm()" class="btn btn-primary !py-1.5 !px-3 text-sm">+ Add</button>
+    </div>
+    ${contacts.length===0 ? `<div class="card p-5"><p class="text-sm" style="color:var(--ink-soft);">Add someone you trust so you can reach them quickly when it helps.</p></div>` : `
+    <div class="flex flex-col gap-3">
+      ${contacts.map(c=>`
+      <div class="card p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="font-semibold">${esc(c.name)}</div>
+            <div class="text-xs" style="color:var(--ink-soft);">${esc(c.relationship)}${c.phone?' · '+esc(c.phone):''}</div>
+          </div>
+          <div class="flex gap-1">
+            <button onclick="App.openContactForm('${c.id}')" class="btn btn-ghost !py-1 !px-2 text-xs">Edit</button>
+            <button onclick="App.removeContact('${c.id}')" class="btn btn-ghost !py-1 !px-2 text-xs" style="color:var(--alert);">Remove</button>
+          </div>
+        </div>
+        <div class="flex gap-2 mt-3">
+          ${c.phone? `<a href="tel:${esc(c.phone)}" class="btn btn-outline !py-1.5 !px-3 text-xs">Contact ${esc(c.name.split(' ')[0])}</a>`:''}
+          <button onclick="App.copyMessageTemplate('${esc(c.name).replace(/'/g,"\\'")}')" class="btn btn-outline !py-1.5 !px-3 text-xs">Copy message template</button>
+        </div>
+      </div>`).join('')}
+    </div>`}
+  </div>`;
+}
+
+/* =========================================================
+   PROFILE
+   ========================================================= */
+function pageProfile(){
+  const data = requireData(); const p = data.profile;
+  return `
+  <div class="max-w-xl mx-auto px-5 sm:px-8 py-7 flex flex-col gap-5">
+    <h1 class="font-display font-semibold text-2xl">Profile</h1>
+    <form onsubmit="return App.saveProfile(event)" class="card p-5 flex flex-col gap-4">
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Name</label><input type="text" id="pf-name" value="${esc(p.name)}"></div>
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Age range</label>
+        <select id="pf-age"><option ${p.ageRange==='Under 18'?'selected':''}>Under 18</option><option ${p.ageRange==='18-21'?'selected':''}>18-21</option><option ${p.ageRange==='22-25'?'selected':''}>22-25</option><option ${p.ageRange==='26+'?'selected':''}>26+</option></select>
+      </div>
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Exam</label>
+        <select id="pf-exam">${EXAM_OPTIONS.map(([l])=>`<option ${p.exam===l?'selected':''}>${l}</option>`).join('')}</select>
+      </div>
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Preparation stage</label>
+        <select id="pf-stage">${STAGE_OPTIONS.map(l=>`<option ${p.stage===l?'selected':''}>${l}</option>`).join('')}</select>
+      </div>
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Attempt type</label>
+        <select id="pf-attempt"><option ${p.attemptType==='First attempt'?'selected':''}>First attempt</option><option ${p.attemptType==='Repeat attempt'?'selected':''}>Repeat attempt</option><option ${p.attemptType==='Drop year'?'selected':''}>Drop year</option></select>
+      </div>
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Exam date</label><input type="date" id="pf-examdate" value="${esc(p.examDate||'')}"></div>
+      <button type="submit" class="btn btn-primary">Save changes</button>
+    </form>
+    <a href="#/trusted-contact" class="card p-4 flex items-center justify-between"><span class="text-sm font-semibold">Trusted contact</span><span>›</span></a>
+  </div>`;
+}
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+function pageSettings(){
+  const data = requireData(); const s = data.settings;
+  return `
+  <div class="max-w-xl mx-auto px-5 sm:px-8 py-7 flex flex-col gap-5">
+    <h1 class="font-display font-semibold text-2xl">Settings</h1>
+    <form onsubmit="return App.saveSettings(event)" class="card p-5 flex flex-col gap-4">
+      <label class="flex items-center justify-between"><span class="text-sm font-semibold">Daily check-in reminder</span><input type="checkbox" id="st-notif" ${s.notifDailyReminder?'checked':''} style="accent-color:var(--brand); width:18px; height:18px;"></label>
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Reminder time</label><input type="text" id="st-time" value="${esc(s.reminderTime)}" placeholder="20:00"></div>
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Theme</label>
+        <select id="st-theme"><option value="light" ${s.theme==='light'?'selected':''}>Light</option><option value="dark" ${s.theme==='dark'?'selected':''}>Dark</option></select>
+      </div>
+      <label class="flex items-center justify-between"><span class="text-sm font-semibold">Large text (accessibility)</span><input type="checkbox" id="st-large" ${s.accessibilityLargeText?'checked':''} style="accent-color:var(--brand); width:18px; height:18px;"></label>
+      <label class="flex items-center justify-between"><span class="text-sm font-semibold">Reduce motion</span><input type="checkbox" id="st-motion" ${s.reducedMotion?'checked':''} style="accent-color:var(--brand); width:18px; height:18px;"></label>
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">AI conversation tone</label>
+        <select id="st-tone"><option value="warm" ${s.aiTone==='warm'?'selected':''}>Warm</option><option value="direct" ${s.aiTone==='direct'?'selected':''}>Direct</option></select>
+      </div>
+      <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Emergency support location</label><input type="text" id="st-loc" value="${esc(s.emergencyLocation)}"></div>
+      <button type="submit" class="btn btn-primary">Save settings</button>
+    </form>
+    <a href="#/settings" onclick="App.openPrivacy(); return false;" class="card p-4 flex items-center justify-between"><span class="text-sm font-semibold">Privacy</span><span>›</span></a>
+    <div class="card p-4 flex flex-col gap-3">
+      <button onclick="App.logout()" class="btn btn-outline w-full">Log out</button>
+      <button onclick="App.confirmDeleteData()" class="btn btn-outline w-full" style="color:var(--alert); border-color:var(--alert);">Delete local data</button>
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   DEV / DEMO MODE
+   ========================================================= */
+const DEMO_SCENARIOS = [
+  {key:'normal', title:'Normal Preparation', desc:'Steady check-ins, low stress.'},
+  {key:'mockfail', title:'Mock Test Failure', desc:'A disappointing mock test just logged.'},
+  {key:'repeated', title:'Repeated High Stress', desc:'Several elevated-stress check-ins in a row.'},
+  {key:'preexam', title:'Pre-Exam Anxiety', desc:'Exam-week phase with high anxiety.'},
+  {key:'results', title:'Result Period', desc:'Result period support active.'},
+  {key:'recovery', title:'Post-Result Recovery', desc:'Recovery phase after a difficult result.'},
+  {key:'crisis', title:'High-Support Mode', desc:'Demonstrates the crisis/high-support flow (safe, simulated).'}
+];
+function pageDev(){
+  return `
+  <div class="max-w-2xl mx-auto px-5 sm:px-8 py-7 flex flex-col gap-5">
+    <h1 class="font-display font-semibold text-2xl">Development / Demo Mode</h1>
+    <p class="text-sm" style="color:var(--ink-soft);">Load a scenario to quickly demonstrate the product journey.</p>
+    <div class="grid sm:grid-cols-2 gap-3">
+      ${DEMO_SCENARIOS.map(s=>`
+      <div class="card p-4">
+        <div class="font-semibold text-sm">${s.title}</div>
+        <p class="text-xs mt-1" style="color:var(--ink-soft);">${s.desc}</p>
+        <button onclick="App.loadScenario('${s.key}')" class="btn btn-outline !py-1.5 !px-3 text-xs mt-3">Load</button>
+      </div>`).join('')}
+    </div>
+    <div class="card p-4">
+      <button onclick="App.loadDemoData()" class="btn btn-primary w-full">Load Demo Data (general)</button>
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   404
+   ========================================================= */
+function page404(){
+  return `<div class="max-w-lg mx-auto px-5 py-16 text-center">
+    <h1 class="font-display font-semibold text-2xl">Page not found</h1>
+    <a href="#/dashboard" class="btn btn-primary mt-4 inline-flex">Back to dashboard</a>
+  </div>`;
+}
+
+/* =========================================================
+   ONBOARDING OPTION CLICK HANDLER
+   Uses event delegation so dynamically rendered option cards remain
+   clickable even when the page is opened from a local file preview.
+   ========================================================= */
+document.addEventListener('click', function(e){
+  const option = e.target.closest('.ob-option');
+  if(!option) return;
+  const group = option.dataset.obGroup;
+  const value = option.dataset.obValue;
+  const form = option.closest('form');
+  if(!group || !form) return;
+  const radio = option.querySelector('input[type="radio"]');
+  if(!radio) return;
+
+  form.querySelectorAll(`input[type="radio"][name="${group}"]`).forEach(input=>{
+    input.checked = (input === radio);
+  });
+  form.querySelectorAll(`.ob-option[data-ob-group="${group}"]`).forEach(card=>{
+    const selected = card === option;
+    card.setAttribute('aria-pressed', String(selected));
+    card.style.borderColor = selected ? 'var(--brand)' : '';
+    card.style.boxShadow = selected ? '0 0 0 2px var(--brand) inset' : '';
+    card.classList.toggle('ring-2', selected);
+  });
+});
+
+document.addEventListener('keydown', function(e){
+  const option = e.target.closest('.ob-option');
+  if(!option || (e.key !== 'Enter' && e.key !== ' ')) return;
+  e.preventDefault();
+  option.click();
+});
+
+/* =========================================================
+   APP — all interactive handlers
+   ========================================================= */
+const App = {
+  /* ---- auth ---- */
+  handleLogin(e){
+    e.preventDefault();
+    const email = document.getElementById('li-email').value.trim();
+    const pw = document.getElementById('li-password').value;
+    const res = authService.login(email, pw);
+    if(!res.ok){ document.getElementById('li-error').textContent = res.error; return false; }
+    applyTheme(); navigate('/dashboard'); return false;
+  },
+  handleSignup(e){
+    e.preventDefault();
+    const name = document.getElementById('su-name').value.trim();
+    const email = document.getElementById('su-email').value.trim();
+    const pw = document.getElementById('su-password').value;
+    if(!name || !email || pw.length<4){ document.getElementById('su-error').textContent='Please fill all fields (password min 4 characters).'; return false; }
+    const res = authService.signup(name, email, pw);
+    if(!res.ok){ document.getElementById('su-error').textContent = res.error; return false; }
+    applyTheme(); navigate('/onboarding'); return false;
+  },
+  logout(){ authService.logout(); navigate('/'); },
+  openForgotPassword(){
+    openModal(`
+    <div class="p-6">
+      <h2 class="font-display font-semibold text-lg">Reset password</h2>
+      <p class="text-xs mt-1" style="color:var(--ink-soft);">Version 1 demo — resets your local demo password directly.</p>
+      <form onsubmit="return App.submitForgotPassword(event)" class="mt-4 flex flex-col gap-3">
+        <input type="email" id="fp-email" placeholder="Email" required>
+        <input type="password" id="fp-password" placeholder="New password" minlength="4" required>
+        <div id="fp-error" class="text-xs" style="color:var(--alert);"></div>
+        <div class="flex gap-2"><button type="button" onclick="closeModal()" class="btn btn-outline flex-1">Cancel</button><button type="submit" class="btn btn-primary flex-1">Reset</button></div>
+      </form>
+    </div>`);
+  },
+  submitForgotPassword(e){
+    e.preventDefault();
+    const email = document.getElementById('fp-email').value.trim();
+    const pw = document.getElementById('fp-password').value;
+    const res = authService.resetPasswordDemo(email, pw);
+    if(!res.ok){ document.getElementById('fp-error').textContent = res.error; return false; }
+    closeModal(); toast('Password reset. You can log in now.'); return false;
+  },
+
+  /* ---- onboarding ---- */
+  obBack(){
+    const user = authService.currentUser();
+    dataService.update(user.id, d=>{ d.profile.onboardingStep = Math.max(1,(d.profile.onboardingStep||1)-1); });
+    render();
+  },
+  obSubmitExam(e){
+    e.preventDefault();
+    const val = e.target.exam.value;
+    const user = authService.currentUser();
+    dataService.update(user.id, d=>{ d.profile.exam=val; d.profile.onboardingStep=2; });
+    render(); return false;
+  },
+  obSubmitStage(e){
+    e.preventDefault(); const val = e.target.stage.value; const user = authService.currentUser();
+    dataService.update(user.id, d=>{ d.profile.stage=val; d.profile.onboardingStep=3; });
+    render(); return false;
+  },
+  obSubmitAcademic(e){
+    e.preventDefault(); const val = e.target.academic.value; const pl = parseInt(document.getElementById('ob-pressure').value,10);
+    const user = authService.currentUser();
+    dataService.update(user.id, d=>{ d.profile.academicSelf=val; d.profile.pressureLevel=pl; d.profile.onboardingStep=4; });
+    render(); return false;
+  },
+  obSubmitPressureSources(e){
+    e.preventDefault();
+    const vals = Array.from(e.target.querySelectorAll('input[name=src]:checked')).map(i=>i.value);
+    const user = authService.currentUser();
+    dataService.update(user.id, d=>{ d.profile.pressureSources=vals; d.profile.onboardingStep=5; });
+    render(); return false;
+  },
+  obSubmitBaseline(e){
+    e.preventDefault();
+    const keys=['stress','sleep','motivation','overwhelmed','support'];
+    const b={}; keys.forEach(k=> b[k]=parseInt(document.getElementById('ob-'+k).value,10));
+    const user = authService.currentUser();
+    dataService.update(user.id, d=>{ d.profile.wellbeingBaseline=b; d.profile.onboardingStep=6; });
+    render(); return false;
+  },
+  obSubmitFinish(e){
+    e.preventDefault();
+    const vals = Array.from(e.target.querySelectorAll('input[name=pref]:checked')).map(i=>i.value);
+    const user = authService.currentUser();
+    dataService.update(user.id, d=>{
+      d.profile.supportPrefs=vals;
+      d.profile.onboardingComplete=true;
+      d.phase = mapStageToPhase(d.profile.stage);
+      if(d.profile.wellbeingBaseline){
+        d.checkins.push({ id: uid('ci'), date: todayISO(), stress:d.profile.wellbeingBaseline.stress, sleep:d.profile.wellbeingBaseline.sleep, overwhelmed:d.profile.wellbeingBaseline.overwhelmed, pressure:d.profile.pressureLevel||5, hope:5, motivation:d.profile.wellbeingBaseline.motivation });
+      }
+    });
+    navigate('/dashboard'); return false;
+  },
+
+  /* ---- check-in ---- */
+  submitCheckIn(e){
+    e.preventDefault();
+    const get = id=> parseInt(document.getElementById(id).value,10);
+    const entry = { id: uid('ci'), date: todayISO(), stress:get('ci-stress'), sleep:get('ci-sleep'), overwhelmed:get('ci-overwhelmed'), pressure:get('ci-pressure'), hope:get('ci-hope'), motivation:get('ci-motivation') };
+    const user = authService.currentUser();
+    dataService.update(user.id, d=>{
+      const idx = d.checkins.findIndex(c=>c.date===entry.date);
+      if(idx>=0) d.checkins[idx]=entry; else d.checkins.push(entry);
+    });
+    toast('Check-in saved.');
+    navigate('/dashboard'); return false;
+  },
+
+  /* ---- timeline ---- */
+  setActiveTimelinePhase(key){
+    window.__tlSel = key;
+    document.getElementById('tl-detail').innerHTML = timelineDetail(key);
+    TIMELINE_PHASES.forEach(p=>{
+      const btn = document.getElementById('tl-tab-'+p.key);
+      if(!btn) return;
+      if(p.key===key) btn.style.cssText = 'background:var(--brand); color:#fff; border-color:var(--brand);';
+      else btn.style.cssText = 'background:var(--surface); border-color:var(--border); color:var(--ink-soft);';
+    });
+  },
+
+  /* ---- mock test ---- */
+  submitMockTest(e){
+    e.preventDefault();
+    const score = parseInt(document.getElementById('mt-score').value,10);
+    const max = parseInt(document.getElementById('mt-max').value,10);
+    const note = document.getElementById('mt-note').value.trim();
+    const user = authService.currentUser();
+    const data = dataService.get(user.id);
+    const prev = data.mockTests[data.mockTests.length-1];
+    const entry = { id: uid('mt'), date: todayISO(), score, max, prevScore: prev?prev.score:null, note };
+    dataService.update(user.id, d=>{ d.mockTests.push(entry); d.phase='mock'; });
+    document.getElementById('mt-emotion-flow').innerHTML = mockEmotionPicker(entry.id);
+    document.getElementById('mt-emotion-flow').scrollIntoView({behavior:'smooth'});
+    toast('Mock test saved.');
+    return false;
+  },
+  pickMockEmotion(mockId, emotionKey){
+    const user = authService.currentUser();
+    dataService.update(user.id, d=>{ const t=d.mockTests.find(m=>m.id===mockId); if(t) t.emotion=emotionKey; });
+    document.getElementById('mt-emotion-flow').innerHTML = mockEmotionResponse(mockId, emotionKey);
+  },
+  showMockPattern(mockId){
+    document.getElementById('mt-emotion-flow').innerHTML = mockPatternView(mockId);
+  },
+
+  /* ---- exam calm: breathing ---- */
+  _breath:{ timer:null, phaseTimer:null, running:false, remaining:0 },
+  breathStart(){
+    if(this._breath.running) return;
+    this._breath.running = true;
+    const dur = parseInt(document.getElementById('breath-duration').value,10);
+    this._breath.remaining = dur;
+    this._runBreathCycle();
+    this._breath.timer = setInterval(()=>{
+      this._breath.remaining--;
+      const el = document.getElementById('breath-timer');
+      if(el) el.textContent = this._breath.remaining>0 ? `${Math.floor(this._breath.remaining/60)}:${String(this._breath.remaining%60).padStart(2,'0')} remaining` : '';
+      if(this._breath.remaining<=0){ this.breathPause(); toast('Breathing exercise complete.'); }
+    },1000);
+  },
+  _runBreathCycle(){
+    const circle = document.getElementById('breath-circle'); const label = document.getElementById('breath-label');
+    if(!circle) return;
+    const cycle = ()=>{
+      if(!this._breath.running) return;
+      circle.className='breathe-circle breathe-in absolute inset-6 rounded-full flex items-center justify-center text-sm font-semibold';
+      circle.style.background='var(--brand-light)'; circle.style.color='var(--brand-dark)';
+      label.textContent='Inhale';
+      this._breath.phaseTimer = setTimeout(()=>{
+        if(!this._breath.running) return;
+        circle.className='breathe-circle breathe-hold absolute inset-6 rounded-full flex items-center justify-center text-sm font-semibold';
+        label.textContent='Hold';
+        this._breath.phaseTimer = setTimeout(()=>{
+          if(!this._breath.running) return;
+          circle.className='breathe-circle breathe-out absolute inset-6 rounded-full flex items-center justify-center text-sm font-semibold';
+          label.textContent='Exhale';
+          this._breath.phaseTimer = setTimeout(cycle, 6000);
+        },4000);
+      },4000);
+    };
+    cycle();
+  },
+  breathPause(){
+    this._breath.running=false;
+    clearInterval(this._breath.timer); clearTimeout(this._breath.phaseTimer);
+    const label=document.getElementById('breath-label'); if(label) label.textContent='Paused';
+  },
+  breathRestart(){
+    this.breathPause();
+    const circle = document.getElementById('breath-circle');
+    if(circle){ circle.className='breathe-circle absolute inset-6 rounded-full flex items-center justify-center text-sm font-semibold'; }
+    const label = document.getElementById('breath-label'); if(label) label.textContent='Ready';
+    const timerEl = document.getElementById('breath-timer'); if(timerEl) timerEl.textContent='';
+  },
+  startWindDown(){
+    toast('2-minute wind-down started — dim your lights and put your phone aside.');
+    this.breathStart();
+  },
+
+  /* ---- grounding ---- */
+  _groundStep:0,
+  groundingNext(){
+    this._groundStep = Math.min(5, this._groundStep+1);
+    document.getElementById('grounding-body').innerHTML = groundingStepView(this._groundStep);
+  },
+  groundingRestart(){
+    this._groundStep = 0;
+    document.getElementById('grounding-body').innerHTML = groundingStepView(0);
+  },
+
+  /* ---- chat ---- */
+  handleChatSubmit(e){
+    e.preventDefault();
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if(!text) return false;
+    input.value='';
+    this.sendChat(text);
+    return false;
+  },
+  sendChat(text){
+    try {
+      const cleanText = String(text || '').trim();
+      if(!cleanText) return false;
+      const user = authService.currentUser();
+      if(!user){
+        toast('Please log in to use Talk to AI.');
+        navigate('/login');
+        return false;
+      }
+
+      let data = dataService.update(user.id, d=>{
+        d.conversations.push({ id: uid('msg'), role:'user', text:cleanText, ts:Date.now() });
+      });
+
+      const scroll = document.getElementById('chat-scroll');
+      if(!scroll){
+        toast('Chat is still loading. Please try again.');
+        return false;
+      }
+
+      scroll.innerHTML = renderChatMessages(data.conversations) +
+        `<div id="chat-typing" class="msg-bubble msg-ai"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>`;
+
+      const form = document.querySelector('#app form');
+      const promptsBar = form ? form.previousElementSibling : null;
+      if(promptsBar && promptsBar.classList.contains('flex-wrap')) promptsBar.remove();
+      scrollChatToBottom();
+
+      setTimeout(()=>{
+        try {
+          const resp = aiService.generateResponse(cleanText, data);
+          const isCrisis = resp.mode==='crisis';
+          data = dataService.update(user.id, d=>{
+            d.conversations.push({ id:uid('msg'), role:'ai', text:resp.text, ts:Date.now() });
+            if(isCrisis) d.safetyEvents.push({ id:uid('se'), date:new Date().toISOString(), context:'chat' });
+          });
+          const updatedScroll = document.getElementById('chat-scroll');
+          if(updatedScroll){
+            updatedScroll.innerHTML = renderChatMessages(data.conversations);
+            scrollChatToBottom();
+          }
+          if(isCrisis) this.openNeedHelp(true);
+        } catch(err) {
+          console.error('MindBridge AI response error:', err);
+          const fallback = "I’m here with you. I couldn't process that message just now. Please try asking in a shorter sentence, such as “I’m overwhelmed”, “make me a study plan”, or “I can’t concentrate”.";
+          dataService.update(user.id, d=>{
+            d.conversations.push({ id:uid('msg'), role:'ai', text:fallback, ts:Date.now() });
+          });
+          render();
+        }
+      }, 500);
+      return true;
+    } catch(err) {
+      console.error('MindBridge chat error:', err);
+      toast('Something went wrong in chat. Please refresh the page and try again.');
+      return false;
+    }
+  },
+  newConversation(){
+    const user = authService.currentUser();
+    dataService.update(user.id, d=>{ d.conversations = []; });
+    render();
+  },
+  clearConversation(){ this.newConversation(); },
+
+  /* ---- wellbeing ---- */
+  setWbRange(r){ window.__wbRange = r; document.getElementById('wb-charts').innerHTML = wellbeingCharts(r); render.__skip=false; document.querySelectorAll('.chip').forEach(()=>{}); render(); },
+
+  /* ---- professional support filter ---- */
+  filterDirectory(){
+    const type = document.getElementById('pd-type').value;
+    const mode = document.getElementById('pd-mode').value;
+    const loc = document.getElementById('pd-location').value.toLowerCase();
+    const filtered = professionalDirectory.filter(p=>
+      (!type || p.type===type) && (!mode || p.mode.includes(mode)) && (!loc || p.location.toLowerCase().includes(loc))
+    );
+    document.getElementById('pd-list').innerHTML = directoryList(filtered);
+  },
+
+  /* ---- trusted contact ---- */
+  openContactForm(contactId){
+    const user = authService.currentUser(); const data = dataService.get(user.id);
+    const c = contactId ? data.trustedContacts.find(x=>x.id===contactId) : null;
+    openModal(`
+    <div class="p-6">
+      <h2 class="font-display font-semibold text-lg">${c?'Edit':'Add'} trusted contact</h2>
+      <form onsubmit="return App.saveContact(event, ${c?`'${c.id}'`:'null'})" class="mt-4 flex flex-col gap-3">
+        <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Name</label><input type="text" id="tc-name" value="${c?esc(c.name):''}" required></div>
+        <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Relationship</label><input type="text" id="tc-rel" value="${c?esc(c.relationship):''}" placeholder="e.g. Sister, Friend, Mentor"></div>
+        <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Phone number</label><input type="text" id="tc-phone" value="${c?esc(c.phone||''):''}"></div>
+        <div><label class="text-xs font-semibold" style="color:var(--ink-soft);">Email (optional)</label><input type="email" id="tc-email" value="${c?esc(c.email||''):''}"></div>
+        <div class="flex gap-2 mt-2"><button type="button" onclick="closeModal()" class="btn btn-outline flex-1">Cancel</button><button type="submit" class="btn btn-primary flex-1">Save</button></div>
+      </form>
+    </div>`);
+  },
+  saveContact(e, contactId){
+    e.preventDefault();
+    const name = document.getElementById('tc-name').value.trim();
+    const relationship = document.getElementById('tc-rel').value.trim();
+    const phone = document.getElementById('tc-phone').value.trim();
+    const email = document.getElementById('tc-email').value.trim();
+    const user = authService.currentUser();
+    dataService.update(user.id, d=>{
+      if(contactId){ const c=d.trustedContacts.find(x=>x.id===contactId); Object.assign(c,{name,relationship,phone,email}); }
+      else d.trustedContacts.push({ id: uid('tc'), name, relationship, phone, email });
+    });
+    closeModal(); toast('Trusted contact saved.'); render(); return false;
+  },
+  removeContact(contactId){
+    const user = authService.currentUser();
+    dataService.update(user.id, d=>{ d.trustedContacts = d.trustedContacts.filter(c=>c.id!==contactId); });
+    render();
+  },
+  copyMessageTemplate(name){
+    const msg = "I'm having a difficult time right now and could use some support. Could you stay with me or talk to me?";
+    navigator.clipboard && navigator.clipboard.writeText(msg).catch(()=>{});
+    toast('Message template copied.');
+  },
+
+  /* ---- profile / settings ---- */
+  saveProfile(e){
+    e.preventDefault();
+    const user = authService.currentUser();
+    dataService.update(user.id, d=>{
+      d.profile.name = document.getElementById('pf-name').value.trim() || d.profile.name;
+      d.profile.ageRange = document.getElementById('pf-age').value;
+      d.profile.exam = document.getElementById('pf-exam').value;
+      d.profile.stage = document.getElementById('pf-stage').value;
+      d.profile.attemptType = document.getElementById('pf-attempt').value;
+      d.profile.examDate = document.getElementById('pf-examdate').value;
+    });
+    const users = authService.getUsers();
+    const u = users.find(x=>x.id===user.id); if(u){ u.name = dataService.get(user.id).profile.name; authService.saveUsers(users); }
+    toast('Profile updated.'); render(); return false;
+  },
+  saveSettings(e){
+    e.preventDefault();
+    const user = authService.currentUser();
+    dataService.update(user.id, d=>{
+      d.settings.notifDailyReminder = document.getElementById('st-notif').checked;
+      d.settings.reminderTime = document.getElementById('st-time').value;
+      d.settings.theme = document.getElementById('st-theme').value;
+      d.settings.accessibilityLargeText = document.getElementById('st-large').checked;
+      d.settings.reducedMotion = document.getElementById('st-motion').checked;
+      d.settings.aiTone = document.getElementById('st-tone').value;
+      d.settings.emergencyLocation = document.getElementById('st-loc').value;
+    });
+    applyTheme();
+    document.documentElement.style.fontSize = dataService.get(user.id).settings.accessibilityLargeText ? '108%' : '100%';
+    toast('Settings saved.'); return false;
+  },
+  openPrivacy(){
+    openModal(`
+    <div class="p-6">
+      <h2 class="font-display font-semibold text-lg">Privacy</h2>
+      <p class="text-sm mt-3 font-semibold">What information does MindBridge use?</p>
+      <ul class="text-sm mt-2 flex flex-col gap-2" style="color:var(--ink-soft);">
+        <li><strong style="color:var(--ink);">Exam context</strong> — so support reflects your exam and stage.</li>
+        <li><strong style="color:var(--ink);">Wellbeing check-ins</strong> — to notice patterns over time.</li>
+        <li><strong style="color:var(--ink);">Mock test information</strong> — to offer relevant recovery support.</li>
+        <li><strong style="color:var(--ink);">Conversation history</strong> — so the AI keeps context within a conversation.</li>
+        <li><strong style="color:var(--ink);">Support preferences</strong> — to tailor what's offered to you.</li>
+      </ul>
+      <p class="text-xs mt-4" style="color:var(--ink-soft);">Your wellbeing data should be handled carefully. In this Version 1 demo, all data is stored locally in your browser only and is not sent to any server. This is not a HIPAA- or GDPR-compliant clinical system.</p>
+      <button onclick="closeModal()" class="btn btn-primary w-full mt-4">Close</button>
+    </div>`);
+  },
+  confirmDeleteData(){
+    openModal(`
+    <div class="p-6">
+      <h2 class="font-display font-semibold text-lg">Delete local data</h2>
+      <p class="text-sm mt-2" style="color:var(--ink-soft);">This permanently removes your MindBridge data from this browser, including check-ins, mock tests and conversations. This can't be undone.</p>
+      <div class="flex gap-2 mt-4"><button onclick="closeModal()" class="btn btn-outline flex-1">Cancel</button><button onclick="App.deleteData()" class="btn btn-alert flex-1">Delete</button></div>
+    </div>`);
+  },
+  deleteData(){
+    const user = authService.currentUser();
+    store.del(dataKey(user.id));
+    const users = authService.getUsers().filter(u=>u.id!==user.id);
+    authService.saveUsers(users);
+    authService.logout();
+    closeModal(); navigate('/');
+  },
+
+  /* ---- need help now ---- */
+  openNeedHelp(fromCrisisChat){
+    const r = CRISIS_RESOURCES;
+    openModal(`
+    <div class="p-6">
+      <h2 class="font-display font-semibold text-lg">You don't have to handle this alone.</h2>
+      ${fromCrisisChat? `<p class="text-sm mt-2" style="color:var(--alert);">I noticed something in what you shared that sounded serious. I can stay with you here, but I'm not a replacement for immediate human help.</p>`:''}
+      <div class="mt-4 flex flex-col gap-3">
+        <div class="p-4 rounded-xl" style="background:var(--alert-light);">
+          <div class="font-semibold text-sm" style="color:var(--alert);">Immediate support</div>
+          <p class="text-xs mt-1" style="color:var(--ink-soft);">Connect with emergency or crisis support available in your location.</p>
+          <div class="mt-2 text-sm"><strong>${r.emergency.label}:</strong> ${r.emergency.value}</div>
+          ${r.lines.map(l=>`<div class="text-sm mt-1"><strong>${l.name}:</strong> ${l.value} <span class="text-xs" style="color:var(--ink-soft);">— ${l.note}</span></div>`).join('')}
+        </div>
+        <a href="#/trusted-contact" onclick="closeModal()" class="p-4 rounded-xl block" style="background:var(--surface-alt);">
+          <div class="font-semibold text-sm">Trusted person</div>
+          <p class="text-xs mt-1" style="color:var(--ink-soft);">Contact someone you trust.</p>
+        </a>
+        <a href="#/support" onclick="closeModal()" class="p-4 rounded-xl block" style="background:var(--surface-alt);">
+          <div class="font-semibold text-sm">Professional support</div>
+          <p class="text-xs mt-1" style="color:var(--ink-soft);">Find qualified mental health support.</p>
+        </a>
+      </div>
+      <p class="text-xs mt-4 font-semibold">Move somewhere safe.</p>
+      <p class="text-xs mt-1" style="color:var(--ink-soft);">If you are in immediate danger or believe you may act on thoughts of harming yourself, contact local emergency services or go to the nearest emergency department.</p>
+      <button onclick="closeModal()" class="btn btn-outline w-full mt-4">Close</button>
+    </div>`);
+  },
+
+  /* ---- dev / demo scenarios ---- */
+  loadScenario(key){
+    const user = authService.currentUser();
+    const mk = (stress,sleep,overwhelmed,pressure,hope,motivation,daysBack)=>({ id: uid('ci'), date: daysAgo(daysBack), stress,sleep,overwhelmed,pressure,hope,motivation });
+    dataService.update(user.id, d=>{
+      d.profile.exam = d.profile.exam || 'NEET';
+      d.profile.onboardingComplete = true;
+      d.resultPeriodActive = false;
+      if(key==='normal'){
+        d.phase='preparation';
+        d.checkins = [mk(3,7,2,3,7,7,4),mk(4,7,3,4,7,7,3),mk(3,8,2,3,8,8,2),mk(4,7,3,4,7,7,1),mk(3,7,2,3,7,8,0)];
+      } else if(key==='mockfail'){
+        d.phase='mock';
+        d.checkins = [mk(6,5,5,6,5,5,3),mk(7,4,6,6,4,4,2),mk(7,5,6,7,4,4,1),mk(8,4,7,7,3,3,0)];
+        d.mockTests.push({ id: uid('mt'), date: todayISO(), score:478, max:720, prevScore:512, note:'Felt rushed in physics section.' });
+      } else if(key==='repeated'){
+        d.phase='mock';
+        d.checkins = [mk(8,3,8,8,3,3,6),mk(7,4,7,8,3,3,5),mk(8,3,8,7,2,2,4),mk(8,4,7,8,3,3,3),mk(9,3,8,9,2,2,2),mk(8,3,8,8,2,3,1),mk(8,4,7,8,3,2,0)];
+      } else if(key==='preexam'){
+        d.phase='pre-exam';
+        d.checkins = [mk(7,4,6,7,4,5,3),mk(8,3,7,8,3,4,2),mk(8,4,7,8,4,4,1),mk(9,3,8,8,3,3,0)];
+      } else if(key==='results'){
+        d.phase='results'; d.resultPeriodActive = true;
+        d.checkins = [mk(8,4,7,7,3,4,2),mk(9,3,8,8,2,3,1),mk(9,4,8,9,2,3,0)];
+      } else if(key==='recovery'){
+        d.phase='recovery';
+        d.checkins = [mk(8,4,7,7,3,3,4),mk(7,5,6,6,4,4,2),mk(6,5,5,6,4,5,0)];
+        d.mockTests.push({ id: uid('mt'), date: daysAgo(3), score:410, max:720, prevScore:478, note:'Result period — feeling low.' });
+      } else if(key==='crisis'){
+        d.phase='recovery';
+        d.checkins = [mk(9,3,9,9,1,2,1)];
+        d.conversations = [];
+      }
+    });
+    if(key==='crisis'){
+      navigate('/chat');
+      setTimeout(()=> this.sendChat("I don't see the point in any of this anymore, I feel like giving up completely."), 400);
+    } else {
+      toast('Demo scenario loaded.');
+      navigate('/dashboard');
+    }
+  },
+  loadDemoData(){ this.loadScenario('normal'); }
+};
+
+// Explicit globals for reliable interaction when the site is opened as a local file.
+window.App = App;
+window.aiService = aiService;
+
+function renderChatMessages(msgs){
+  if(msgs.length===0) return `<div class="text-center py-8"><p class="text-sm" style="color:var(--ink-soft);">Start a conversation whenever you need a space to talk.</p></div>`;
+  return msgs.map(m=>`<div class="msg-bubble ${m.role==='ai'?'msg-ai':'msg-user'}">${esc(m.text)}</div>`).join('');
+}
+function mapStageToPhase(stage){
+  if(!stage) return 'preparation';
+  const s = stage.toLowerCase();
+  if(s.includes('mock')) return 'mock';
+  if(s.includes('final exam')) return 'pre-exam';
+  if(s.includes('results') || s.includes('waiting')) return 'results';
+  if(s.includes('repeated') || s.includes('drop year')) return 'recovery';
+  return 'preparation';
+}
+</script>
+</body>
+</html>
